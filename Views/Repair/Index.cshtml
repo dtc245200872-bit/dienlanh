@@ -1,0 +1,22 @@
+﻿@model List<dienlanh.Models.RepairRequest>
+
+<h2>Danh sách yêu cầu sửa chữa</h2>
+
+<a href="/Repair/Create">Tạo yêu cầu</a>
+
+<table border="1">
+    <tr>
+        <th>Thiết bị</th>
+        <th>Sự cố</th>
+        <th>Địa chỉ</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.DeviceType</td>
+            <td>@item.Issue</td>
+            <td>@item.Address</td>
+        </tr>
+    }
+</table>

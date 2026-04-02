@@ -1,0 +1,22 @@
+﻿@model dienlanh.Models.RepairRequest
+
+<h2>Tạo yêu cầu sửa chữa</h2>
+
+<form asp-action="Create" method="post">
+    <div>
+        <label>Thiết bị</label>
+        <input asp-for="DeviceType" />
+    </div>
+
+    <div>
+        <label>Sự cố</label>
+        <input asp-for="Issue" />
+    </div>
+
+    <div>
+        <label>Địa chỉ</label>
+        <input asp-for="Address"/>
+    </div>
+
+    <button type="submit">Gửi</button>
+</form>
