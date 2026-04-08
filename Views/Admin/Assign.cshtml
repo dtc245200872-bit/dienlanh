@@ -1,0 +1,14 @@
+﻿<h2>Phân công kỹ thuật viên</h2>
+
+<form method="post">
+    <input type="hidden" name="requestId" value="@ViewBag.RequestId" />
+
+    <select name="technicianId">
+        @foreach (var tech in ViewBag.Techs)
+        {
+            <option value="@tech.Id">@tech.Email</option>
+        }
+    </select>
+
+    <button type="submit">Gán</button>
+</form>

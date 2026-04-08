@@ -1,0 +1,8 @@
+﻿@model List<dienlanh.Models.RepairRequest>
+
+<h2>Lịch sử sửa chữa</h2>
+
+@foreach (var item in Model)
+{
+    <p>@item.DeviceType - @item.Status</p>
+}

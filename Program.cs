@@ -3,6 +3,8 @@ using dienlanh.Models;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSession();
+
 
 // Add services
 builder.Services.AddControllersWithViews();
@@ -16,6 +18,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseSession();
 
 app.UseAuthorization();
 

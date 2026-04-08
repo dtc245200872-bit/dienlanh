@@ -1,0 +1,55 @@
+﻿@{
+    ViewData["Title"] = "Đăng ký";
+}
+
+<div class="d-flex justify-content-center align-items-center vh-100">
+
+    <div class="card shadow p-4" style="width: 420px; border-radius: 15px;">
+
+        <h3 class="text-center mb-4">📝 Đăng ký</h3>
+
+        <form method="post">
+
+            <!-- Name -->
+            <div class="mb-3">
+                <label>Họ tên</label>
+                <input type="text" name="Name" class="form-control" placeholder="Nhập họ tên" required />
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+                <label>Email</label>
+                <input type="email" name="Email" class="form-control" placeholder="Nhập email" required />
+            </div>
+
+            <!-- Password -->
+            <div class="mb-3">
+                <label>Mật khẩu</label>
+                <input type="password" name="Password" class="form-control" placeholder="Nhập mật khẩu" required />
+            </div>
+
+            <!-- Role -->
+            <div class="mb-3">
+                <label>Vai trò</label>
+                <select name="Role" class="form-control">
+                    <option value="Customer">Khách hàng</option>
+                    <option value="Technician">Kỹ thuật viên</option>
+                </select>
+            </div>
+
+            <!-- Button -->
+            <button type="submit" class="btn btn-success w-100">
+                Đăng ký
+            </button>
+
+            <!-- Login -->
+            <div class="text-center mt-3">
+                <small>
+                    Đã có tài khoản?
+                    <a href="/Account/Login">Đăng nhập</a>
+                </small>
+            </div>
+
+        </form>
+    </div>
+</div>

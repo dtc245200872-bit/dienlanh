@@ -1,22 +1,56 @@
-﻿@model dienlanh.Models.RepairRequest
+﻿@{
+    ViewData["Title"] = "Tạo yêu cầu";
+}
 
-<h2>Tạo yêu cầu sửa chữa</h2>
+<h3 class="mb-4">📋 Tạo yêu cầu sửa chữa</h3>
 
-<form asp-action="Create" method="post">
-    <div>
-        <label>Thiết bị</label>
-        <input asp-for="DeviceType" />
+<form method="post" enctype="multipart/form-data" class="card p-4 shadow">
+
+
+
+    <!-- Thiết bị -->
+    <div class="mb-3">
+        <label>Loại thiết bị</label>
+        <select name="DeviceType" class="form-control" required>
+            <option value="">-- Chọn thiết bị --</option>
+            <option>Máy lạnh</option>
+            <option>Tủ lạnh</option>
+            <option>Máy giặt</option>
+            <option>Quạt điện</option>
+            <option>Lò vi sóng</option>
+        </select>
     </div>
 
-    <div>
+    <!-- Sự cố -->
+    <div class="mb-3">
         <label>Sự cố</label>
-        <input asp-for="Issue" />
+        <input type="text" name="Issue" class="form-control" placeholder="Mô tả lỗi..." required />
     </div>
 
-    <div>
+    <!-- Địa chỉ -->
+    <div class="mb-3">
         <label>Địa chỉ</label>
-        <input asp-for="Address"/>
+        <input type="text" name="Address" class="form-control" required />
     </div>
 
-    <button type="submit">Gửi</button>
+    <!-- SĐT -->
+    <div class="mb-3">
+        <label>Số điện thoại</label>
+        <input type="text" name="Phone" class="form-control" required />
+    </div>
+
+    <!-- Email -->
+    <div class="mb-3">
+        <label>Email</label>
+        <input type="email" name="Email" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label>Hình ảnh thiết bị</label>
+        <input type="file" name="imageFile" class="form-control" />
+    </div>
+
+    <button class="btn btn-primary w-100">
+        Gửi yêu cầu
+    </button>
+
 </form>

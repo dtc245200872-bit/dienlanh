@@ -1,0 +1,78 @@
+﻿@model List<dienlanh.Models.RepairRequest>
+
+<h2 class="mb-4">🛠 Công việc của tôi</h2>
+
+<table class="table table-bordered table-hover shadow">
+    <thead class="table-dark">
+        <tr>
+            <th>Thiết bị</th>
+            <th>Sự cố</th>
+            <th>Địa chỉ</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.DeviceType</td>
+                <td>@item.Issue</td>
+                <td>@item.Address</td>
+
+                <!-- 🔥 STATUS -->
+                <td>
+                    @if (item.Status == "Chờ xử lý")
+                    {
+                        <span class="badge bg-secondary">Chờ xử lý</span>
+                    }
+                    else if (item.Status == "Đã phân công")
+                    {
+                        <span class="badge bg-warning text-dark">Đã phân công</span>
+                    }
+                    else if (item.Status == "Đang sửa")
+                    {
+                        <span class="badge bg-primary">Đang sửa</span>
+                    }
+                    else if (item.Status == "Hoàn thành")
+                    {
+                        <span class="badge bg-success">Hoàn thành</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-dark">@item.Status</span>
+                    }
+                </td>
+                <td>
+                    @if (item.ImagePath != null)
+                    {
+                        <img src="@item.ImagePath" width="100" style="border-radius:10px;" />
+                    }
+                </td>
+
+                <!-- 🔥 ACTION -->
+                <td>
+                    @if (item.Status == "Đã phân công")
+                    {
+                        <a href="/Repair/UpdateStatus?id=@item.Id&status=Đang sửa"
+                           class="btn btn-primary btn-sm">
+                            Nhận việc
+                        </a>
+                    }
+                    else if (item.Status == "Đang sửa")
+                    {
+                        <a href="/Repair/UpdateStatus?id=@item.Id&status=Hoàn thành"
+                           class="btn btn-success btn-sm">
+                            Hoàn thành
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">---</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

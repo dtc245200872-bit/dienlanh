@@ -1,22 +1,22 @@
 ﻿@model List<dienlanh.Models.RepairRequest>
 
-<h2>Danh sách yêu cầu sửa chữa</h2>
+<h2 class="text-center mt-3">Danh sách yêu cầu sửa chữa</h2>
 
-<a href="/Repair/Create">Tạo yêu cầu</a>
+<div class="container">
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4">
+                <div class="card shadow mb-4">
+                    <img src="/images/repair.jpg" class="card-img-top" />
 
-<table border="1">
-    <tr>
-        <th>Thiết bị</th>
-        <th>Sự cố</th>
-        <th>Địa chỉ</th>
-    </tr>
-
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>@item.DeviceType</td>
-            <td>@item.Issue</td>
-            <td>@item.Address</td>
-        </tr>
-    }
-</table>
+                    <div class="card-body">
+                        <h5 class="card-title">@item.DeviceType</h5>
+                        <p class="card-text">@item.Issue</p>
+                        <p><b>Trạng thái:</b> @item.Status</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
