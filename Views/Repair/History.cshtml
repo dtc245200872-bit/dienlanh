@@ -1,8 +1,40 @@
 ﻿@model List<dienlanh.Models.RepairRequest>
 
-<h2>Lịch sử sửa chữa</h2>
+<h2 class="mb-4">Lịch sử sửa chữa</h2>
 
-@foreach (var item in Model)
-{
-    <p>@item.DeviceType - @item.Status</p>
-}
+<div class="card shadow-sm border-0">
+    <div class="card-body">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Thiết bị</th>
+                    <th>Sự cố</th>
+                    <th>Trạng thái</th>
+                    <th class="text-end">Chi phí</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">Bạn chưa có lịch sử sửa chữa.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.DeviceType</td>
+                            <td>@item.Issue</td>
+                            <td>@item.Status</td>
+                            <td class="text-end">@((item.FinalAmount ?? 0m).ToString("N0"))đ</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

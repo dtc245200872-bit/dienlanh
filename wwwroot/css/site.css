@@ -8,8 +8,17 @@ html {
   }
 }
 
+:root {
+  --page-bg: #f3f5f8;
+  --surface-bg: #ffffff;
+  --brand: #2f4f6f;
+  --brand-soft: #5f7b99;
+  --text-main: #22313f;
+  --border-soft: #d9e0e8;
+}
+
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+  box-shadow: 0 0 0 0.1rem #fff, 0 0 0 0.2rem rgba(47, 79, 111, 0.2);
 }
 
 html {
@@ -19,6 +28,8 @@ html {
 
 body {
   margin-bottom: 60px;
+  background: var(--page-bg);
+  color: var(--text-main);
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
@@ -29,19 +40,47 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
-body {
-    background: linear-gradient(135deg, #74ebd5, #ACB6E5);
-}
-
 .card {
-    border: none;
+    border: 1px solid var(--border-soft);
+    background: var(--surface-bg);
+    border-radius: 0.75rem;
 }
 
 input:focus {
     box-shadow: none !important;
-    border-color: #0d6efd !important;
+    border-color: var(--brand-soft) !important;
 }
 .card:hover {
-    transform: translateY(-5px);
-    transition: 0.3s;
+    transform: translateY(-3px);
+    transition: 0.25s ease;
+}
+
+.navbar.app-navbar {
+    background: #2d3f50;
+}
+
+.navbar.app-navbar .navbar-brand,
+.navbar.app-navbar .nav-link,
+.navbar.app-navbar .navbar-text {
+    color: #e9eef5;
+}
+
+.navbar.app-navbar .nav-link:hover,
+.navbar.app-navbar .nav-link:focus,
+.navbar.app-navbar .nav-link.active {
+    color: #ffffff;
+}
+
+.navbar.app-navbar .btn-outline-light {
+    border-color: #c6d0dc;
+    color: #e9eef5;
+}
+
+.navbar.app-navbar .btn-outline-light:hover {
+    background: #e9eef5;
+    color: #2d3f50;
+}
+
+footer {
+    color: #5f6f7f;
 }

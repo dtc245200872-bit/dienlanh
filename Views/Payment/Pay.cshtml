@@ -1,7 +1,7 @@
 ﻿@model dienlanh.Models.RepairRequest
 
 <div class="card shadow p-4">
-    <h3 class="mb-3">💰 Thanh toán</h3>
+    <h3 class="mb-3">Thanh toán</h3>
 
     <p><b>Thiết bị:</b> @Model.DeviceType</p>
     <p><b>Sự cố:</b> @Model.Issue</p>
@@ -15,8 +15,6 @@
     <form method="post" action="/Payment/Confirm">
         <input type="hidden" name="id" value="@Model.Id" />
 
-        <button class="btn btn-success mt-3 w-100">
-            ✅ Xác nhận thanh toán
-        </button>
+        <button class="btn btn-success mt-3 w-100">Xác nhận thanh toán</button>
     </form>
 </div>

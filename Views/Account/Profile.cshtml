@@ -1,0 +1,23 @@
+@model dienlanh.Models.User
+
+<h2 class="mb-4">Thông tin tài khoản</h2>
+
+<div class="card shadow-sm border-0" style="max-width: 540px;">
+    <div class="card-body">
+        <div class="mb-3">
+            <label class="form-label text-muted">Họ tên</label>
+            <div class="fw-semibold">@(string.IsNullOrWhiteSpace(Model.Name) ? "Chưa cập nhật" : Model.Name)</div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label text-muted">Email</label>
+            <div class="fw-semibold">@Model.Email</div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label text-muted">Vai trò</label>
+            <div class="fw-semibold text-capitalize">@Model.Role</div>
+        </div>
+        <div class="text-muted small">
+            Mã tài khoản: #@Model.Id
+        </div>
+    </div>
+</div>

@@ -1,6 +1,6 @@
 ﻿@model List<dienlanh.Models.RepairRequest>
 
-<h2 class="mb-4 fw-bold">📋 Yêu cầu của tôi</h2>
+<h2 class="mb-4 fw-bold">Yêu cầu của tôi</h2>
 
 <div class="row">
     @foreach (var item in Model)
@@ -26,9 +26,7 @@
                     </p>
 
                     <!-- ĐỊA CHỈ -->
-                    <p class="small text-secondary">
-                        📍 @item.Address
-                    </p>
+                    <p class="small text-secondary">@item.Address</p>
 
                     <!-- TRẠNG THÁI -->
                     <div class="mb-3">
@@ -100,7 +98,7 @@
                         @if (item.Status == "Chờ thanh toán" && !(item.CustomerReported && !item.ReportResolved))
                         {
                             <a href="/Payment/Pay?id=@item.Id" class="btn btn-success w-100">
-                                💰 Thanh toán
+                                Thanh toán
                             </a>
                         }
                         else
@@ -115,7 +113,7 @@
                             <form method="post" action="/Customer/ReportIssue" class="mt-2">
                                 <input type="hidden" name="id" value="@item.Id" />
                                 <textarea class="form-control mb-2" name="note" rows="2" placeholder="Báo lỗi nếu phát hiện sai linh kiện hoặc vấn đề sau thanh toán..."></textarea>
-                                <button class="btn btn-outline-danger w-100">🚨 Báo lỗi cho hệ thống</button>
+                                <button class="btn btn-outline-danger w-100">Báo lỗi cho hệ thống</button>
                             </form>
                         }
                     </div>

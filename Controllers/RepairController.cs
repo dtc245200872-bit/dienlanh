@@ -226,6 +226,22 @@ namespace dienlanh.Controllers
         }
 
         // 🔥 Payment
+        public IActionResult History()
+        {
+            var role = HttpContext.Session.GetString("role");
+            var userId = HttpContext.Session.GetInt32("userId");
+
+            if (role != "customer" || userId == null)
+                return RedirectToAction("Login", "Account");
+
+            var history = _context.RepairRequests
+                .Where(r => r.CustomerId == userId)
+                .OrderByDescending(r => r.Id)
+                .ToList();
+
+            return View(history);
+        }
+
         public IActionResult Payment(int id)
         {
             var role = HttpContext.Session.GetString("role");

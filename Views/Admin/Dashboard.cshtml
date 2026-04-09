@@ -1,2 +1,59 @@
-﻿<h2>Admin Dashboard</h2>
-<p>Chỉ admin mới vào được</p>
+﻿@model dienlanh.Models.AdminStatisticsViewModel
+
+<h2 class="mb-4">Admin Dashboard</h2>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="text-muted">Tổng yêu cầu</div>
+                <div class="fs-3 fw-bold">@Model.TotalRequests</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="text-muted">Chờ xử lý</div>
+                <div class="fs-3 fw-bold text-warning">@Model.PendingRequests</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="text-muted">Đã hoàn thành</div>
+                <div class="fs-3 fw-bold text-primary">@Model.CompletedRequests</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="text-muted">Doanh thu</div>
+                <div class="fs-3 fw-bold text-success">@Model.TotalRevenue.ToString("N0")đ</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h5 class="card-title">Tài khoản hệ thống</h5>
+                <p class="mb-1">Khách hàng: <b>@Model.TotalCustomers</b></p>
+                <p class="mb-0">Kỹ thuật viên: <b>@Model.TotalTechnicians</b></p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h5 class="card-title">Báo cáo nhanh</h5>
+                <p class="mb-2">Yêu cầu đã thanh toán: <b>@Model.PaidRequests</b></p>
+                <a class="btn btn-outline-primary btn-sm" href="/Admin/Statistics">Xem báo cáo chi tiết</a>
+            </div>
+        </div>
+    </div>
+</div>

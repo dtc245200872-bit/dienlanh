@@ -68,6 +68,23 @@ namespace dienlanh.Controllers
             ViewBag.Error = "Sai tài khoản hoặc mật khẩu";
             return View();
         }
+
+        public IActionResult Profile()
+        {
+            var userId = HttpContext.Session.GetInt32("userId");
+            if (userId == null)
+                return RedirectToAction("Login");
+
+            var user = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
+            if (user == null)
+            {
+                HttpContext.Session.Clear();
+                return RedirectToAction("Login");
+            }
+
+            return View(user);
+        }
+
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();

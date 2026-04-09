@@ -22,7 +22,8 @@ namespace dienlanh.Controllers
             if (role != "admin")
                 return RedirectToAction("Login", "Account");
 
-            return View();
+            var stats = BuildStatistics();
+            return View(stats);
         }
 
         // 🔥 Danh sách yêu cầu
@@ -52,6 +53,16 @@ namespace dienlanh.Controllers
                 .ToList();
 
             return View(reports);
+        }
+
+        public IActionResult Statistics()
+        {
+            var role = HttpContext.Session.GetString("role");
+            if (role != "admin")
+                return RedirectToAction("Login", "Account");
+
+            var stats = BuildStatistics();
+            return View(stats);
         }
 
         [HttpPost]
@@ -157,6 +168,44 @@ namespace dienlanh.Controllers
             _context.SaveChanges();
 
             return RedirectToAction("Requests");
+        }
+
+        private AdminStatisticsViewModel BuildStatistics()
+        {
+            var requestQuery = _context.RepairRequests.AsQueryable();
+            var paidStatuses = new[] { "Đã thanh toán" };
+            var completedStatuses = new[] { "Hoàn thành", "Đã hoàn thành", "Đã thanh toán" };
+
+            return new AdminStatisticsViewModel
+            {
+                TotalRequests = requestQuery.Count(),
+                PendingRequests = requestQuery.Count(r => r.Status == "Chờ xử lý"),
+                CompletedRequests = requestQuery.Count(r => r.Status != null && completedStatuses.Contains(r.Status)),
+                PaidRequests = requestQuery.Count(r => r.Status != null && paidStatuses.Contains(r.Status)),
+                TotalCustomers = _context.Users.Count(u => u.Role != null && u.Role.ToLower() == "customer"),
+                TotalTechnicians = _context.Users.Count(u => u.Role != null && u.Role.ToLower() == "technician"),
+                TotalRevenue = requestQuery
+                    .Where(r => r.Status != null && paidStatuses.Contains(r.Status))
+                    .Sum(r => r.FinalAmount ?? 0m),
+                DeviceBreakdown = requestQuery
+                    .GroupBy(r => r.DeviceType ?? "Chưa rõ")
+                    .Select(g => new DeviceStatsItem
+                    {
+                        DeviceType = g.Key,
+                        Count = g.Count()
+                    })
+                    .OrderByDescending(x => x.Count)
+                    .ToList(),
+                StatusBreakdown = requestQuery
+                    .GroupBy(r => r.Status ?? "Chưa cập nhật")
+                    .Select(g => new StatusStatsItem
+                    {
+                        Status = g.Key,
+                        Count = g.Count()
+                    })
+                    .OrderByDescending(x => x.Count)
+                    .ToList()
+            };
         }
     }
 }
