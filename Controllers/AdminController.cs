@@ -1,4 +1,4 @@
-﻿using dienlanh.Data;
+using dienlanh.Data;
 using dienlanh.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

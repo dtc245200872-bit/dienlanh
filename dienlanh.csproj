@@ -22,4 +22,10 @@
     <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
+  <Target Name="StopStaleDienlanhProcess" BeforeTargets="Build" Condition="'$(OS)' == 'Windows_NT'">
+    <Exec
+      Command="cmd /c &quot;taskkill /F /IM dienlanh.exe &gt;nul 2&gt;nul &amp; exit /b 0&quot;"
+      ContinueOnError="true" />
+  </Target>
+
 </Project>
