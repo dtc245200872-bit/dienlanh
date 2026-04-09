@@ -19,7 +19,7 @@ namespace dienlanh.Controllers
         {
             var role = HttpContext.Session.GetString("role");
 
-            if (role != "Admin")
+            if (role != "admin")
                 return RedirectToAction("Login", "Account");
 
             return View();
@@ -30,7 +30,7 @@ namespace dienlanh.Controllers
         {
             var role = HttpContext.Session.GetString("role");
 
-            if (role != "Admin")
+            if (role != "admin")
                 return RedirectToAction("Login", "Account");
 
             var list = _context.RepairRequests
@@ -40,12 +40,53 @@ namespace dienlanh.Controllers
             return View(list);
         }
 
+        public IActionResult Reports()
+        {
+            var role = HttpContext.Session.GetString("role");
+            if (role != "admin")
+                return RedirectToAction("Login", "Account");
+
+            var reports = _context.RepairRequests
+                .Where(r => r.CustomerReported)
+                .OrderByDescending(r => r.ReportedAt)
+                .ToList();
+
+            return View(reports);
+        }
+
+        [HttpPost]
+        public IActionResult ResolveReport(int id, string resolutionNote)
+        {
+            var role = HttpContext.Session.GetString("role");
+            if (role != "admin")
+                return RedirectToAction("Login", "Account");
+
+            var req = _context.RepairRequests.Find(id);
+            if (req == null) return NotFound();
+            if (!req.CustomerReported) return BadRequest("Yêu cầu chưa có báo lỗi.");
+
+            req.ReportResolved = true;
+            req.ReportResolutionNote = string.IsNullOrWhiteSpace(resolutionNote)
+                ? "Đã xử lý theo quy trình."
+                : resolutionNote.Trim();
+            req.ResolvedAt = DateTime.Now;
+
+            // Return to relevant workflow after resolving report.
+            if (req.PartsConfirmedByCustomer && req.Status == "Đã báo lỗi")
+                req.Status = "Chờ thanh toán";
+            else if (!req.PartsConfirmedByCustomer && req.Status == "Đã báo lỗi")
+                req.Status = "Chờ khách xác nhận linh kiện";
+
+            _context.SaveChanges();
+            return RedirectToAction("Reports");
+        }
+
         // 🔥 Trang phân công
         public IActionResult Assign(int id)
         {
             var role = HttpContext.Session.GetString("role");
 
-            if (role != "Admin")
+            if (role != "admin")
                 return RedirectToAction("Login", "Account");
 
             var request = _context.RepairRequests.Find(id);
@@ -54,13 +95,43 @@ namespace dienlanh.Controllers
                 return NotFound();
 
             var technicians = _context.Users
-                .Where(u => u.Role == "Technician")
+                .Where(u => u.Role != null && u.Role.ToLower() == "technician")
                 .ToList();
 
             ViewBag.Techs = technicians;
             ViewBag.Request = request;
+            ViewBag.RequestId = request.Id;
 
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult Review(int id, string decision)
+        {
+            var role = HttpContext.Session.GetString("role");
+
+            if (role != "admin")
+                return RedirectToAction("Login", "Account");
+
+            var req = _context.RepairRequests.Find(id);
+            if (req == null)
+                return NotFound();
+
+            if (decision == "approve")
+            {
+                req.Status = "Đã duyệt";
+            }
+            else if (decision == "reject")
+            {
+                req.Status = "Từ chối";
+            }
+            else
+            {
+                return BadRequest("Quyết định không hợp lệ");
+            }
+
+            _context.SaveChanges();
+            return RedirectToAction("Requests");
         }
 
         // 🔥 Xử lý phân công
@@ -69,13 +140,16 @@ namespace dienlanh.Controllers
         {
             var role = HttpContext.Session.GetString("role");
 
-            if (role != "Admin")
+            if (role != "admin")
                 return RedirectToAction("Login", "Account");
 
             var req = _context.RepairRequests.Find(requestId);
 
             if (req == null)
                 return NotFound();
+
+            if (req.Status != "Đã duyệt")
+                return BadRequest("Yêu cầu chưa được duyệt để phân công");
 
             req.TechnicianId = technicianId;
             req.Status = "Đã phân công"; // 🔥 chuẩn hơn

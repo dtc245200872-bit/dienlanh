@@ -1,0 +1,39 @@
+@model List<dienlanh.Models.Component>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Quản lý linh kiện</h2>
+    <a class="btn btn-primary" href="/Component/Create">+ Thêm linh kiện</a>
+</div>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-light">
+        <tr>
+            <th>Tên linh kiện</th>
+            <th>Thiết bị</th>
+            <th>Giá</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="4" class="text-center text-muted">Chưa có linh kiện nào.</td>
+            </tr>
+        }
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@(item.Device?.Name ?? "Chưa gắn thiết bị")</td>
+                <td>@item.Price.ToString("N0")đ</td>
+                <td style="width: 140px;">
+                    <form method="post" action="/Component/Delete">
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <button class="btn btn-sm btn-outline-danger w-100">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

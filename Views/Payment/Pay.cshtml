@@ -1,0 +1,22 @@
+﻿@model dienlanh.Models.RepairRequest
+
+<div class="card shadow p-4">
+    <h3 class="mb-3">💰 Thanh toán</h3>
+
+    <p><b>Thiết bị:</b> @Model.DeviceType</p>
+    <p><b>Sự cố:</b> @Model.Issue</p>
+    <p><b>Địa chỉ:</b> @Model.Address</p>
+
+    <hr />
+
+    <p><b>Linh kiện đã thay:</b> @Model.ReplacedParts</p>
+    <h4 class="text-danger">Tổng tiền: @((Model.FinalAmount ?? 0).ToString("N0"))đ</h4>
+
+    <form method="post" action="/Payment/Confirm">
+        <input type="hidden" name="id" value="@Model.Id" />
+
+        <button class="btn btn-success mt-3 w-100">
+            ✅ Xác nhận thanh toán
+        </button>
+    </form>
+</div>

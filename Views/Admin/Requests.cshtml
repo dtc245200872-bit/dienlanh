@@ -2,23 +2,57 @@
 
 <h2>Danh sách yêu cầu</h2>
 
-<table border="1">
-    <tr>
-        <th>Thiết bị</th>
-        <th>Sự cố</th>
-        <th>Trạng thái</th>
-        <th>Phân công</th>
-    </tr>
-
-    @foreach (var item in Model)
-    {
+<table class="table table-bordered table-hover">
+    <thead class="table-light">
         <tr>
-            <td>@item.DeviceType</td>
-            <td>@item.Issue</td>
-            <td>@item.Status</td>
-            <td>
-                <a href="/Admin/Assign/@item.Id">Gán thợ</a>
-            </td>
+            <th>Thiết bị</th>
+            <th>Sự cố</th>
+            <th>Trạng thái</th>
+            <th>Duyệt yêu cầu</th>
+            <th>Phân công</th>
         </tr>
-    }
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.DeviceType</td>
+                <td>@item.Issue</td>
+                <td>@item.Status</td>
+                <td>
+                    @if (item.Status == "Chờ xử lý")
+                    {
+                        <form method="post" action="/Admin/Review" class="d-inline">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <input type="hidden" name="decision" value="approve" />
+                            <button type="submit" class="btn btn-sm btn-success">Duyệt</button>
+                        </form>
+                        <form method="post" action="/Admin/Review" class="d-inline">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <input type="hidden" name="decision" value="reject" />
+                            <button type="submit" class="btn btn-sm btn-danger">Từ chối</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Đã xử lý</span>
+                    }
+                </td>
+                <td>
+                    @if (item.Status == "Đã duyệt")
+                    {
+                        <a href="/Admin/Assign/@item.Id" class="btn btn-sm btn-primary">Gán thợ</a>
+                    }
+                    else if (item.Status == "Đã phân công" || item.Status == "Đang sửa" || item.Status == "Hoàn thành" || item.Status == "Đã thanh toán")
+                    {
+                        <span class="text-success">Đã phân công</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Chưa thể gán</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>

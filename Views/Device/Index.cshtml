@@ -1,0 +1,37 @@
+@model List<dienlanh.Models.Device>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Quản lý thiết bị</h2>
+    <a class="btn btn-primary" href="/Device/Create">+ Thêm thiết bị</a>
+</div>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-light">
+        <tr>
+            <th>Tên thiết bị</th>
+            <th>Mô tả</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="3" class="text-center text-muted">Chưa có thiết bị nào.</td>
+            </tr>
+        }
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Description</td>
+                <td style="width: 140px;">
+                    <form method="post" action="/Device/Delete">
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <button class="btn btn-sm btn-outline-danger w-100">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using dienlanh.Data;
 
@@ -11,9 +12,11 @@ using dienlanh.Data;
 namespace dienlanh.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260409083639_technician_parts_customer_confirm")]
+    partial class technician_parts_customer_confirm
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,55 +24,6 @@ namespace dienlanh.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("dienlanh.Models.Component", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("DeviceId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("nvarchar(120)");
-
-                    b.Property<decimal>("Price")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DeviceId");
-
-                    b.ToTable("Components");
-                });
-
-            modelBuilder.Entity("dienlanh.Models.Device", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Devices");
-                });
 
             modelBuilder.Entity("dienlanh.Models.RepairRequest", b =>
                 {
@@ -98,7 +52,6 @@ namespace dienlanh.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("FinalAmount")
-                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ImagePath")
@@ -116,16 +69,7 @@ namespace dienlanh.Migrations
                     b.Property<string>("ReplacedParts")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ReportResolutionNote")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("ReportResolved")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime?>("ReportedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("ResolvedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Status")
@@ -167,15 +111,6 @@ namespace dienlanh.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("dienlanh.Models.Component", b =>
-                {
-                    b.HasOne("dienlanh.Models.Device", "Device")
-                        .WithMany()
-                        .HasForeignKey("DeviceId");
-
-                    b.Navigation("Device");
                 });
 
             modelBuilder.Entity("dienlanh.Models.RepairRequest", b =>

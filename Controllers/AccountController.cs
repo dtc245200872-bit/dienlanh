@@ -24,6 +24,13 @@ namespace dienlanh.Controllers
         [HttpPost]
         public IActionResult Register(User user)
         {
+            user.Role = (user.Role ?? string.Empty).Trim().ToLower();
+            if (user.Role != "customer" && user.Role != "technician")
+            {
+                ViewBag.Error = "Vai trò không hợp lệ";
+                return View(user);
+            }
+
             _context.Users.Add(user);
             _context.SaveChanges();
             return RedirectToAction("Login");
@@ -42,19 +49,19 @@ namespace dienlanh.Controllers
 
             if (user != null)
             {
-                // 🔥 Lưu session (KHÔNG toLower)
-                HttpContext.Session.SetString("role", user.Role.Trim());
+                // 🔥 LUÔN dùng lowercase
+                HttpContext.Session.SetString("role", user.Role.Trim().ToLower());
                 HttpContext.Session.SetInt32("userId", user.Id);
                 HttpContext.Session.SetString("email", user.Email);
 
                 // 🔥 Phân quyền
-                if (user.Role == "Admin")
+                if (user.Role.ToLower() == "admin")
                     return RedirectToAction("Dashboard", "Admin");
 
-                if (user.Role == "Technician")
+                if (user.Role.ToLower() == "technician")
                     return RedirectToAction("MyJobs", "Repair");
 
-                if (user.Role == "Customer")
+                if (user.Role.ToLower() == "customer")
                     return RedirectToAction("Home", "Customer");
             }
 

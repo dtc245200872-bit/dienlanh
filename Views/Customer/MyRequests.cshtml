@@ -1,0 +1,127 @@
+﻿@model List<dienlanh.Models.RepairRequest>
+
+<h2 class="mb-4 fw-bold">📋 Yêu cầu của tôi</h2>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card shadow-sm border-0 h-100">
+
+                <!-- ẢNH -->
+                <img src="@(item.ImagePath ?? "/images/no-image.png")"
+                     class="card-img-top"
+                     style="height:200px; object-fit:cover;" />
+
+                <div class="card-body d-flex flex-column">
+
+                    <!-- TÊN -->
+                    <h5 class="card-title fw-bold text-primary">
+                        @item.DeviceType
+                    </h5>
+
+                    <!-- MÔ TẢ -->
+                    <p class="text-muted mb-2">
+                        @item.Issue
+                    </p>
+
+                    <!-- ĐỊA CHỈ -->
+                    <p class="small text-secondary">
+                        📍 @item.Address
+                    </p>
+
+                    <!-- TRẠNG THÁI -->
+                    <div class="mb-3">
+                        @if (item.Status == "Chờ xử lý")
+                        {
+                            <span class="badge bg-secondary">Chờ xử lý</span>
+                        }
+                        else if (item.Status == "Đã phân công")
+                        {
+                            <span class="badge bg-warning text-dark">Đã phân công</span>
+                        }
+                        else if (item.Status == "Đang sửa")
+                        {
+                            <span class="badge bg-primary">Đang sửa</span>
+                        }
+                        else if (item.Status == "Chờ khách xác nhận linh kiện")
+                        {
+                            <span class="badge bg-warning text-dark">Chờ xác nhận linh kiện</span>
+                        }
+                        else if (item.Status == "Chờ thanh toán")
+                        {
+                            <span class="badge bg-info text-dark">Chờ thanh toán</span>
+                        }
+                        else if (item.Status == "Hoàn thành" || item.Status == "Đã hoàn thành")
+                        {
+                            <span class="badge bg-success">Hoàn thành</span>
+                        }
+                        else if (item.Status == "Đã thanh toán")
+                        {
+                            <span class="badge bg-success">Đã thanh toán</span>
+                        }
+                        else if (item.Status == "Đã báo lỗi")
+                        {
+                            <span class="badge bg-danger">Đã báo lỗi</span>
+                        }
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(item.ReplacedParts))
+                    {
+                        <p class="small mb-1"><b>Linh kiện đã thay:</b> @item.ReplacedParts</p>
+                    }
+                    @if (item.FinalAmount != null)
+                    {
+                        <p class="small mb-2"><b>Tổng tiền dự kiến:</b> @item.FinalAmount.Value.ToString("N0")đ</p>
+                    }
+                    @if (item.CustomerReported)
+                    {
+                        <div class="alert alert-danger p-2 small mb-2">
+                            <b>Đã báo lỗi:</b> @item.CustomerReportNote
+                        </div>
+                        @if (item.ReportResolved)
+                        {
+                            <div class="alert alert-success p-2 small mb-2">
+                                <b>Hệ thống đã xử lý:</b> @item.ReportResolutionNote
+                            </div>
+                        }
+                    }
+
+                    <!-- NÚT -->
+                    <div class="mt-auto">
+                        @if (item.Status == "Chờ khách xác nhận linh kiện")
+                        {
+                            <form method="post" action="/Customer/ConfirmParts" class="mb-2">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button class="btn btn-primary w-100">Xác nhận đã thay đúng linh kiện</button>
+                            </form>
+                        }
+
+                        @if (item.Status == "Chờ thanh toán" && !(item.CustomerReported && !item.ReportResolved))
+                        {
+                            <a href="/Payment/Pay?id=@item.Id" class="btn btn-success w-100">
+                                💰 Thanh toán
+                            </a>
+                        }
+                        else
+                        {
+                            <button class="btn btn-outline-secondary w-100" disabled>
+                                Chưa thể thanh toán
+                            </button>
+                        }
+
+                        @if (item.Status == "Chờ khách xác nhận linh kiện" || item.Status == "Chờ thanh toán" || item.Status == "Đã thanh toán" || item.Status == "Đã báo lỗi")
+                        {
+                            <form method="post" action="/Customer/ReportIssue" class="mt-2">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <textarea class="form-control mb-2" name="note" rows="2" placeholder="Báo lỗi nếu phát hiện sai linh kiện hoặc vấn đề sau thanh toán..."></textarea>
+                                <button class="btn btn-outline-danger w-100">🚨 Báo lỗi cho hệ thống</button>
+                            </form>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    }
+</div>

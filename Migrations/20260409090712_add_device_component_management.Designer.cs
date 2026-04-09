@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using dienlanh.Data;
 
@@ -11,9 +12,11 @@ using dienlanh.Data;
 namespace dienlanh.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260409090712_add_device_component_management")]
+    partial class add_device_component_management
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -116,16 +119,7 @@ namespace dienlanh.Migrations
                     b.Property<string>("ReplacedParts")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ReportResolutionNote")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("ReportResolved")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime?>("ReportedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("ResolvedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Status")

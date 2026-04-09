@@ -1,6 +1,9 @@
 ﻿@model List<dienlanh.Models.RepairRequest>
+@{
+    var history = ViewBag.JobHistory as List<dienlanh.Models.RepairRequest> ?? new List<dienlanh.Models.RepairRequest>();
+}
 
-<h2 class="mb-4">🛠 Công việc của tôi</h2>
+<h2 class="mb-4">🛠 Công việc được phân công</h2>
 
 <table class="table table-bordered table-hover shadow">
     <thead class="table-dark">
@@ -9,11 +12,18 @@
             <th>Sự cố</th>
             <th>Địa chỉ</th>
             <th>Trạng thái</th>
+            <th>Ảnh</th>
             <th>Hành động</th>
         </tr>
     </thead>
 
     <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="6" class="text-center text-muted">Chưa có công việc chờ nhận.</td>
+            </tr>
+        }
         @foreach (var item in Model)
         {
             <tr>
@@ -29,11 +39,11 @@
                     }
                     else if (item.Status == "Đã phân công")
                     {
-                        <span class="badge bg-warning text-dark">Đã phân công</span>
+                        <span class="badge bg-warning text-dark">Chuẩn bị bắt đầu</span>
                     }
                     else if (item.Status == "Đang sửa")
                     {
-                        <span class="badge bg-primary">Đang sửa</span>
+                        <span class="badge bg-primary">Đang thực hiện</span>
                     }
                     else if (item.Status == "Hoàn thành")
                     {
@@ -53,18 +63,64 @@
 
                 <!-- 🔥 ACTION -->
                 <td>
-                    @if (item.Status == "Đã phân công")
+                    <a href="/Repair/UpdateStatus?id=@item.Id&status=Đang sửa"
+                       class="btn btn-primary btn-sm">
+                        Nhận việc
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h2 class="mb-3 mt-5">📜 Lịch sử công việc của tôi</h2>
+<table class="table table-bordered table-hover shadow-sm">
+    <thead class="table-light">
+        <tr>
+            <th>Thiết bị</th>
+            <th>Sự cố</th>
+            <th>Địa chỉ</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!history.Any())
+        {
+            <tr>
+                <td colspan="5" class="text-center text-muted">Chưa có lịch sử công việc.</td>
+            </tr>
+        }
+        @foreach (var item in history)
+        {
+            <tr>
+                <td>@item.DeviceType</td>
+                <td>@item.Issue</td>
+                <td>@item.Address</td>
+                <td>
+                    @if (item.Status == "Đang sửa")
                     {
-                        <a href="/Repair/UpdateStatus?id=@item.Id&status=Đang sửa"
-                           class="btn btn-primary btn-sm">
-                            Nhận việc
-                        </a>
+                        <span class="badge bg-primary">Đang thực hiện</span>
                     }
-                    else if (item.Status == "Đang sửa")
+                    else if (item.Status == "Hoàn thành")
                     {
-                        <a href="/Repair/UpdateStatus?id=@item.Id&status=Hoàn thành"
+                        <span class="badge bg-success">Hoàn thành</span>
+                    }
+                    else if (item.Status == "Đã thanh toán")
+                    {
+                        <span class="badge bg-info text-dark">Đã thanh toán</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-dark">@item.Status</span>
+                    }
+                </td>
+                <td>
+                    @if (item.Status == "Đang sửa")
+                    {
+                        <a href="/Repair/Complete?id=@item.Id"
                            class="btn btn-success btn-sm">
-                            Hoàn thành
+                            Chọn linh kiện & Hoàn thành
                         </a>
                     }
                     else

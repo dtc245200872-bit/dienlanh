@@ -1,0 +1,54 @@
+@model dienlanh.Models.RepairRequest
+@using System.Collections.Generic
+@{
+    var componentPrices = ViewBag.ComponentPrices as Dictionary<string, decimal> ?? new Dictionary<string, decimal>();
+    decimal baseFee = 200000m;
+}
+
+<h3 class="mb-3">✅ Hoàn thành công việc</h3>
+<div class="card shadow p-4">
+    <p><b>Thiết bị:</b> @Model.DeviceType</p>
+    <p><b>Sự cố:</b> @Model.Issue</p>
+    <p><b>Địa chỉ:</b> @Model.Address</p>
+    <hr />
+
+    <form method="post" action="/Repair/Complete">
+        <input type="hidden" name="id" value="@Model.Id" />
+
+        <label class="fw-bold mb-2">Chọn linh kiện đã thay</label>
+        @foreach (var item in componentPrices)
+        {
+            <div class="form-check mb-1">
+                <input class="form-check-input part-check" type="checkbox" name="replacedParts" value="@item.Key" data-price="@item.Value" id="part_@item.Key.Replace(" ", "_")" />
+                <label class="form-check-label" for="part_@item.Key.Replace(" ", "_")">
+                    @item.Key - @item.Value.ToString("N0")đ
+                </label>
+            </div>
+        }
+
+        <div class="mt-3">
+            <span class="fw-bold text-danger">Tổng dự kiến: <span id="totalValue">@baseFee.ToString("N0")</span>đ</span>
+        </div>
+
+        <button class="btn btn-success mt-3">Xác nhận hoàn thành & Gửi khách xác nhận</button>
+    </form>
+</div>
+
+<script>
+    (function () {
+        const baseFee = @baseFee;
+        const checks = document.querySelectorAll(".part-check");
+        const totalEl = document.getElementById("totalValue");
+
+        function recalc() {
+            let total = baseFee;
+            checks.forEach(chk => {
+                if (chk.checked) total += Number(chk.dataset.price || 0);
+            });
+            totalEl.textContent = total.toLocaleString("vi-VN");
+        }
+
+        checks.forEach(chk => chk.addEventListener("change", recalc));
+        recalc();
+    })();
+</script>
