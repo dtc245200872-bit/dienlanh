@@ -1,40 +1,32 @@
-<h2 class="text-center mb-4">Trang khách hàng</h2>
-
-<div class="container">
-    <div class="row">
-
-        <!-- Đặt sửa chữa -->
-        <div class="col-md-4">
-            <div class="card shadow text-center">
-                <img src="https://kholanhngocnhi.com/wp-content/uploads/2021/05/sua-may-lanh-cong-nghiep.jpg" class="card-img-top" />
-                <div class="card-body">
-                    <h5>Đặt sửa chữa</h5>
-                    <a href="/Repair/Create" class="btn btn-primary">Đặt ngay</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Lịch sử -->
-        <div class="col-md-4">
-            <div class="card shadow text-center">
-                <img src="https://kholanhngocnhi.com/wp-content/uploads/2021/05/sua-may-lanh-cong-nghiep.jpg" class="card-img-top" />
-                <div class="card-body">
-                    <h5>Lịch sử sửa chữa</h5>
-                    <a href="/Repair/History" class="btn btn-success">Xem</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Thông tin -->
-        <div class="col-md-4">
-            <div class="card shadow text-center">
-                <img src="https://kholanhngocnhi.com/wp-content/uploads/2021/05/sua-may-lanh-cong-nghiep.jpg" class="card-img-top" />
-                <div class="card-body">
-                    <h5>Tài khoản</h5>
-                    <a href="/Account/Profile" class="btn btn-warning">Xem</a>
-                </div>
-            </div>
-        </div>
-
-    </div>
+<div class="customer-home-header">
+    <h1>Chào mừng khách hàng</h1>
+    <p>Vui lòng chọn chức năng từ menu để tiếp tục.</p>
 </div>
+
+<section class="customer-hero" id="customerHero">
+    <button type="button" class="customer-hamburger" id="customerMenuToggle" aria-label="Mở menu khách hàng">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <aside class="customer-drawer" id="customerDrawer">
+        <a class="customer-menu-item" href="/Repair/Create">Tạo yêu cầu sửa chữa</a>
+        <a class="customer-menu-item" href="/Customer/MyRequests">Yêu cầu của tôi</a>
+        <a class="customer-menu-item" href="/Repair/History">Lịch sử sửa chữa</a>
+        <a class="customer-menu-item" href="/Account/Profile">Thông tin tài khoản</a>
+    </aside>
+</section>
+
+<script>
+    (function () {
+        const toggle = document.getElementById("customerMenuToggle");
+        const drawer = document.getElementById("customerDrawer");
+        if (!toggle || !drawer) return;
+
+        toggle.addEventListener("click", function () {
+            drawer.classList.toggle("open");
+            toggle.classList.toggle("open");
+        });
+    })();
+</script>

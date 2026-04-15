@@ -19,6 +19,7 @@ namespace dienlanh.Models
         public string? DeviceType { get; set; }
         public string? Issue { get; set; }
         public string? Address { get; set; }
+        public DateTime? PreferredVisitAt { get; set; }
 
         // 🔥 NÊN THÊM (để đúng yêu cầu đề bài)
         public string? Phone { get; set; }

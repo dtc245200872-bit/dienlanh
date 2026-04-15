@@ -27,6 +27,10 @@
 
                     <!-- ĐỊA CHỈ -->
                     <p class="small text-secondary">@item.Address</p>
+                    <p class="small text-secondary mb-2">
+                        <b>Lịch hẹn mong muốn:</b>
+                        @(item.PreferredVisitAt.HasValue ? item.PreferredVisitAt.Value.ToString("dd/MM/yyyy HH:mm") : "Chưa chọn")
+                    </p>
 
                     <!-- TRẠNG THÁI -->
                     <div class="mb-3">

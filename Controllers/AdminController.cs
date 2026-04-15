@@ -2,6 +2,7 @@ using dienlanh.Data;
 using dienlanh.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace dienlanh.Controllers
 {
@@ -14,12 +15,16 @@ namespace dienlanh.Controllers
             _context = context;
         }
 
+        private bool IsAdmin()
+        {
+            var role = HttpContext.Session.GetString("role");
+            return role == "admin";
+        }
+
         // 🔥 Dashboard
         public IActionResult Dashboard()
         {
-            var role = HttpContext.Session.GetString("role");
-
-            if (role != "admin")
+            if (!IsAdmin())
                 return RedirectToAction("Login", "Account");
 
             var stats = BuildStatistics();
@@ -29,9 +34,7 @@ namespace dienlanh.Controllers
         // 🔥 Danh sách yêu cầu
         public IActionResult Requests()
         {
-            var role = HttpContext.Session.GetString("role");
-
-            if (role != "admin")
+            if (!IsAdmin())
                 return RedirectToAction("Login", "Account");
 
             var list = _context.RepairRequests
@@ -43,8 +46,7 @@ namespace dienlanh.Controllers
 
         public IActionResult Reports()
         {
-            var role = HttpContext.Session.GetString("role");
-            if (role != "admin")
+            if (!IsAdmin())
                 return RedirectToAction("Login", "Account");
 
             var reports = _context.RepairRequests
@@ -57,8 +59,7 @@ namespace dienlanh.Controllers
 
         public IActionResult Statistics()
         {
-            var role = HttpContext.Session.GetString("role");
-            if (role != "admin")
+            if (!IsAdmin())
                 return RedirectToAction("Login", "Account");
 
             var stats = BuildStatistics();
@@ -68,8 +69,7 @@ namespace dienlanh.Controllers
         [HttpPost]
         public IActionResult ResolveReport(int id, string resolutionNote)
         {
-            var role = HttpContext.Session.GetString("role");
-            if (role != "admin")
+            if (!IsAdmin())
                 return RedirectToAction("Login", "Account");
 
             var req = _context.RepairRequests.Find(id);
@@ -95,9 +95,7 @@ namespace dienlanh.Controllers
         // 🔥 Trang phân công
         public IActionResult Assign(int id)
         {
-            var role = HttpContext.Session.GetString("role");
-
-            if (role != "admin")
+            if (!IsAdmin())
                 return RedirectToAction("Login", "Account");
 
             var request = _context.RepairRequests.Find(id);
@@ -119,9 +117,7 @@ namespace dienlanh.Controllers
         [HttpPost]
         public IActionResult Review(int id, string decision)
         {
-            var role = HttpContext.Session.GetString("role");
-
-            if (role != "admin")
+            if (!IsAdmin())
                 return RedirectToAction("Login", "Account");
 
             var req = _context.RepairRequests.Find(id);
@@ -149,9 +145,7 @@ namespace dienlanh.Controllers
         [HttpPost]
         public IActionResult Assign(int requestId, int technicianId)
         {
-            var role = HttpContext.Session.GetString("role");
-
-            if (role != "admin")
+            if (!IsAdmin())
                 return RedirectToAction("Login", "Account");
 
             var req = _context.RepairRequests.Find(requestId);
@@ -168,6 +162,171 @@ namespace dienlanh.Controllers
             _context.SaveChanges();
 
             return RedirectToAction("Requests");
+        }
+
+        // Staff management
+        public IActionResult Staff()
+        {
+            if (!IsAdmin())
+                return RedirectToAction("Login", "Account");
+
+            var staff = _context.Users
+                .Where(u => u.Role != null && (u.Role.ToLower() == "technician" || u.Role.ToLower() == "admin"))
+                .OrderBy(u => u.Role)
+                .ThenBy(u => u.Name)
+                .ThenBy(u => u.Email)
+                .ToList();
+
+            return View(staff);
+        }
+
+        public IActionResult CreateStaff()
+        {
+            if (!IsAdmin())
+                return RedirectToAction("Login", "Account");
+
+            return View(new StaffFormViewModel { Role = "technician" });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CreateStaff(StaffFormViewModel model)
+        {
+            if (!IsAdmin())
+                return RedirectToAction("Login", "Account");
+
+            model.Role = (model.Role ?? string.Empty).Trim().ToLower();
+            if (model.Role != "technician" && model.Role != "admin")
+                ModelState.AddModelError(nameof(model.Role), "Vai trò phải là technician hoặc admin.");
+
+            if (string.IsNullOrWhiteSpace(model.Password))
+                ModelState.AddModelError(nameof(model.Password), "Vui lòng nhập mật khẩu.");
+
+            if (_context.Users.Any(u => u.Email == model.Email))
+                ModelState.AddModelError(nameof(model.Email), "Email đã tồn tại.");
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = new User
+            {
+                Name = model.Name?.Trim(),
+                Phone = model.Phone?.Trim(),
+                Specializations = model.Specializations?.Trim(),
+                Email = model.Email.Trim(),
+                Password = model.Password,
+                Role = model.Role
+            };
+
+            _context.Users.Add(user);
+            _context.SaveChanges();
+
+            return RedirectToAction(nameof(Staff));
+        }
+
+        public IActionResult EditStaff(int id)
+        {
+            if (!IsAdmin())
+                return RedirectToAction("Login", "Account");
+
+            var user = _context.Users.FirstOrDefault(u => u.Id == id);
+            if (user == null)
+                return NotFound();
+
+            var model = new StaffFormViewModel
+            {
+                Id = user.Id,
+                Name = user.Name ?? string.Empty,
+                Phone = user.Phone ?? string.Empty,
+                Specializations = user.Specializations ?? string.Empty,
+                Email = user.Email,
+                Role = user.Role ?? "technician"
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EditStaff(StaffFormViewModel model)
+        {
+            if (!IsAdmin())
+                return RedirectToAction("Login", "Account");
+
+            var user = _context.Users.FirstOrDefault(u => u.Id == model.Id);
+            if (user == null)
+                return NotFound();
+
+            model.Role = (model.Role ?? string.Empty).Trim().ToLower();
+            if (model.Role != "technician" && model.Role != "admin")
+                ModelState.AddModelError(nameof(model.Role), "Vai trò phải là technician hoặc admin.");
+
+            if (_context.Users.Any(u => u.Email == model.Email && u.Id != model.Id))
+                ModelState.AddModelError(nameof(model.Email), "Email đã tồn tại.");
+
+            if (!string.IsNullOrWhiteSpace(model.Password) && model.Password.Length < 6)
+                ModelState.AddModelError(nameof(model.Password), "Mật khẩu mới phải có ít nhất 6 ký tự.");
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            user.Name = model.Name?.Trim();
+            user.Phone = model.Phone?.Trim();
+            user.Specializations = model.Specializations?.Trim();
+            user.Email = model.Email.Trim();
+            user.Role = model.Role;
+
+            // Keep existing password if admin leaves the password input empty.
+            if (!string.IsNullOrWhiteSpace(model.Password))
+                user.Password = model.Password;
+
+            _context.SaveChanges();
+
+            return RedirectToAction(nameof(Staff));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteStaff(int id)
+        {
+            if (!IsAdmin())
+                return RedirectToAction("Login", "Account");
+
+            var currentUserId = HttpContext.Session.GetInt32("userId");
+            if (currentUserId == id)
+            {
+                TempData["StaffError"] = "Không thể tự xóa tài khoản đang đăng nhập.";
+                return RedirectToAction(nameof(Staff));
+            }
+
+            var user = _context.Users.FirstOrDefault(u => u.Id == id);
+            if (user == null)
+                return NotFound();
+
+            var role = (user.Role ?? string.Empty).ToLower();
+            if (role != "technician" && role != "admin")
+            {
+                TempData["StaffError"] = "Chỉ được xóa tài khoản nhân viên.";
+                return RedirectToAction(nameof(Staff));
+            }
+
+            // If staff is assigned to repair requests, unassign first to satisfy FK constraints.
+            var assignedRequests = _context.RepairRequests
+                .Where(r => r.TechnicianId == id)
+                .ToList();
+
+            foreach (var request in assignedRequests)
+            {
+                request.TechnicianId = null;
+                if (request.Status == "Đã phân công")
+                    request.Status = "Đã duyệt";
+            }
+
+            _context.Users.Remove(user);
+            _context.SaveChanges();
+
+            TempData["StaffSuccess"] = "Đã xóa nhân viên thành công.";
+            return RedirectToAction(nameof(Staff));
         }
 
         private AdminStatisticsViewModel BuildStatistics()
@@ -207,5 +366,29 @@ namespace dienlanh.Controllers
                     .ToList()
             };
         }
+    }
+
+    public class StaffFormViewModel
+    {
+        public int Id { get; set; }
+
+        [Required(ErrorMessage = "Vui lòng nhập họ tên.")]
+        public string Name { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Vui lòng nhập số điện thoại.")]
+        public string Phone { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Vui lòng nhập chuyên môn sửa chữa.")]
+        public string Specializations { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Vui lòng nhập email.")]
+        [EmailAddress(ErrorMessage = "Email không hợp lệ.")]
+        public string Email { get; set; } = string.Empty;
+
+        [MinLength(6, ErrorMessage = "Mật khẩu phải có ít nhất 6 ký tự.")]
+        public string Password { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Vui lòng chọn vai trò.")]
+        public string Role { get; set; } = "technician";
     }
 }

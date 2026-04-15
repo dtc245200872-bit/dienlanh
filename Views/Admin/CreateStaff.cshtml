@@ -1,0 +1,59 @@
+@model dienlanh.Controllers.StaffFormViewModel
+
+<h2 class="mb-3">Thêm nhân viên</h2>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <form asp-action="CreateStaff" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Phone" class="form-label">Số điện thoại</label>
+                <input asp-for="Phone" class="form-control" />
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Specializations" class="form-label">Chuyên môn sửa chữa</label>
+                <input asp-for="Specializations" class="form-control"
+                       placeholder="Ví dụ: Máy lạnh, Tủ lạnh, Máy giặt" />
+                <span asp-validation-for="Specializations" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label">Mật khẩu</label>
+                <input asp-for="Password" type="password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="Role" class="form-label">Vai trò</label>
+                <select asp-for="Role" class="form-select">
+                    <option value="technician">technician</option>
+                    <option value="admin">admin</option>
+                </select>
+                <span asp-validation-for="Role" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary" type="submit">Lưu</button>
+                <a asp-action="Staff" class="btn btn-outline-secondary">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<partial name="_ValidationScriptsPartial" />

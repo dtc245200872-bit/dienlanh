@@ -18,5 +18,10 @@ namespace dienlanh.Models
 
         // 🔥 NÊN THÊM (quan trọng cho UI)
         public string? Name { get; set; }
+
+        public string? Phone { get; set; }
+
+        // Comma-separated or free-text list of equipment specializations.
+        public string? Specializations { get; set; }
     }
 }

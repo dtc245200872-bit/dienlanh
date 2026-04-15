@@ -11,6 +11,7 @@
             <th>Thiết bị</th>
             <th>Sự cố</th>
             <th>Địa chỉ</th>
+            <th>Lịch hẹn</th>
             <th>Trạng thái</th>
             <th>Ảnh</th>
             <th>Hành động</th>
@@ -21,7 +22,7 @@
         @if (!Model.Any())
         {
             <tr>
-                <td colspan="6" class="text-center text-muted">Chưa có công việc chờ nhận.</td>
+                <td colspan="7" class="text-center text-muted">Chưa có công việc chờ nhận.</td>
             </tr>
         }
         @foreach (var item in Model)
@@ -30,6 +31,7 @@
                 <td>@item.DeviceType</td>
                 <td>@item.Issue</td>
                 <td>@item.Address</td>
+                <td>@(item.PreferredVisitAt.HasValue ? item.PreferredVisitAt.Value.ToString("dd/MM/yyyy HH:mm") : "-")</td>
 
                 <!-- 🔥 STATUS -->
                 <td>
@@ -80,6 +82,7 @@
             <th>Thiết bị</th>
             <th>Sự cố</th>
             <th>Địa chỉ</th>
+            <th>Lịch hẹn</th>
             <th>Trạng thái</th>
             <th>Hành động</th>
         </tr>
@@ -88,7 +91,7 @@
         @if (!history.Any())
         {
             <tr>
-                <td colspan="5" class="text-center text-muted">Chưa có lịch sử công việc.</td>
+                <td colspan="6" class="text-center text-muted">Chưa có lịch sử công việc.</td>
             </tr>
         }
         @foreach (var item in history)
@@ -97,6 +100,7 @@
                 <td>@item.DeviceType</td>
                 <td>@item.Issue</td>
                 <td>@item.Address</td>
+                <td>@(item.PreferredVisitAt.HasValue ? item.PreferredVisitAt.Value.ToString("dd/MM/yyyy HH:mm") : "-")</td>
                 <td>
                     @if (item.Status == "Đang sửa")
                     {

@@ -40,12 +40,7 @@ namespace dienlanh.Controllers
         // 🔥 Form tạo
         public IActionResult Create()
         {
-            ViewBag.Devices = new List<string>
-            {
-                "Máy lạnh", "Tủ lạnh", "Máy giặt"
-            };
-
-            return View();
+            return View(new RepairRequest());
         }
 
         [HttpPost]
@@ -55,6 +50,23 @@ namespace dienlanh.Controllers
 
             if (string.IsNullOrEmpty(role) || role != "customer")
                 return RedirectToAction("Login", "Account");
+
+            if (!request.PreferredVisitAt.HasValue)
+            {
+                ViewBag.Error = "Vui lòng chọn ngày giờ mong muốn.";
+                return View(request);
+            }
+
+            var preferredTime = request.PreferredVisitAt.Value;
+            var isInWorkingWindow =
+                preferredTime.TimeOfDay >= new TimeSpan(8, 0, 0) &&
+                preferredTime.TimeOfDay <= new TimeSpan(19, 0, 0);
+
+            if (!isInWorkingWindow)
+            {
+                ViewBag.Error = "Khung giờ hỗ trợ là từ 08:00 đến 19:00 mỗi ngày.";
+                return View(request);
+            }
 
             // 🔥 GÁN CUSTOMER
             request.CustomerId = HttpContext.Session.GetInt32("userId");

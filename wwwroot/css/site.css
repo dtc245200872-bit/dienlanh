@@ -9,16 +9,18 @@ html {
 }
 
 :root {
-  --page-bg: #f3f5f8;
-  --surface-bg: #ffffff;
-  --brand: #2f4f6f;
-  --brand-soft: #5f7b99;
-  --text-main: #22313f;
-  --border-soft: #d9e0e8;
+  --blue: #0d6efd;
+  --white: #ffffff;
+  --page-bg: #dbe9ff;
+  --surface-bg: var(--white);
+  --brand: var(--blue);
+  --brand-soft: var(--blue);
+  --text-main: #000000;
+  --border-soft: rgba(13, 110, 253, 0.25);
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem #fff, 0 0 0 0.2rem rgba(47, 79, 111, 0.2);
+  box-shadow: 0 0 0 0.1rem var(--white), 0 0 0 0.2rem rgba(13, 110, 253, 0.35);
 }
 
 html {
@@ -56,31 +58,257 @@ input:focus {
 }
 
 .navbar.app-navbar {
-    background: #2d3f50;
+    background: var(--blue);
 }
 
 .navbar.app-navbar .navbar-brand,
 .navbar.app-navbar .nav-link,
 .navbar.app-navbar .navbar-text {
-    color: #e9eef5;
+    color: var(--white);
 }
 
 .navbar.app-navbar .nav-link:hover,
 .navbar.app-navbar .nav-link:focus,
 .navbar.app-navbar .nav-link.active {
-    color: #ffffff;
+    color: var(--white);
+    opacity: 0.9;
 }
 
 .navbar.app-navbar .btn-outline-light {
-    border-color: #c6d0dc;
-    color: #e9eef5;
+    border-color: var(--white);
+    color: var(--white);
 }
 
 .navbar.app-navbar .btn-outline-light:hover {
-    background: #e9eef5;
-    color: #2d3f50;
+    background: var(--white);
+    color: var(--blue);
 }
 
 footer {
-    color: #5f6f7f;
+    color: #000000;
+}
+
+.btn-primary,
+.btn-success,
+.btn-danger,
+.btn-warning,
+.btn-info,
+.btn-dark,
+.btn-secondary {
+    background-color: var(--blue) !important;
+    border-color: var(--blue) !important;
+    color: var(--white) !important;
+}
+
+.btn-outline-primary,
+.btn-outline-success,
+.btn-outline-danger,
+.btn-outline-warning,
+.btn-outline-info,
+.btn-outline-dark,
+.btn-outline-secondary {
+    background-color: var(--white) !important;
+    border-color: var(--blue) !important;
+    color: var(--blue) !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-success:hover,
+.btn-outline-danger:hover,
+.btn-outline-warning:hover,
+.btn-outline-info:hover,
+.btn-outline-dark:hover,
+.btn-outline-secondary:hover {
+    background-color: var(--blue) !important;
+    color: var(--white) !important;
+}
+
+.badge,
+.bg-primary,
+.bg-success,
+.bg-danger,
+.bg-warning,
+.bg-info,
+.bg-dark,
+.bg-secondary {
+    background-color: var(--blue) !important;
+    color: var(--white) !important;
+}
+
+.table,
+.table th,
+.table td,
+.dropdown-menu,
+.form-control,
+.form-select,
+.border,
+.border-top,
+.border-bottom,
+.border-start,
+.border-end {
+    border-color: rgba(13, 110, 253, 0.25) !important;
+}
+
+.form-control,
+.form-select,
+.dropdown-menu {
+    background-color: var(--white) !important;
+    color: #000000 !important;
+}
+
+.customer-vertical-menu {
+    padding: 0.5rem 0;
+}
+
+.customer-home-header {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.customer-home-header h1 {
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    margin-bottom: 0.5rem;
+}
+
+.customer-home-header p {
+    margin-bottom: 0;
+}
+
+.customer-hero {
+    min-height: calc(100vh - 240px);
+    border-radius: 1rem;
+    border: 1px solid rgba(13, 110, 253, 0.25);
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.62)),
+        url("https://kholanhngocnhi.com/wp-content/uploads/2021/05/sua-may-lanh-cong-nghiep.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.customer-hero-content {
+    text-align: center;
+    max-width: 760px;
+}
+
+.customer-hero-content h1 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    margin-bottom: 0.75rem;
+}
+
+.customer-hero-content p {
+    font-size: 1.05rem;
+    margin-bottom: 1.5rem;
+}
+
+.customer-image-note {
+    border: 2px dashed rgba(13, 110, 253, 0.45);
+    border-radius: 0.75rem;
+    min-height: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.65);
+}
+
+.customer-hamburger {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    width: 48px;
+    height: 48px;
+    border: 1px solid rgba(13, 110, 253, 0.35);
+    border-radius: 0.6rem;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    z-index: 12;
+}
+
+.customer-hamburger span {
+    width: 22px;
+    height: 2px;
+    background: #0d6efd;
+    transition: transform 0.25s ease;
+}
+
+.customer-hamburger.open span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.customer-hamburger.open span:nth-child(2) {
+    transform: scaleX(0);
+}
+
+.customer-hamburger.open span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+.customer-drawer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100%;
+    background: #ffffff;
+    border-right: 1px solid rgba(13, 110, 253, 0.25);
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    z-index: 10;
+    padding-top: 4.5rem;
+}
+
+.customer-drawer.open {
+    transform: translateX(0);
+}
+
+.customer-menu-item {
+    display: block;
+    padding: 0.9rem 1rem;
+    text-decoration: none;
+    color: #000000;
+    border-left: 3px solid transparent;
+}
+
+.customer-menu-item + .customer-menu-item {
+    border-top: 1px solid rgba(13, 110, 253, 0.2);
+}
+
+.customer-menu-item:hover {
+    background: rgba(13, 110, 253, 0.08);
+    border-left-color: var(--blue);
+}
+
+.customer-image-placeholder {
+    min-height: 320px;
+    border: 2px dashed rgba(13, 110, 253, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.customer-image-placeholder .placeholder-content {
+    color: #000000;
+}
+
+@media (max-width: 768px) {
+    .customer-hero {
+        min-height: calc(100vh - 280px);
+        padding: 1rem;
+    }
+
+    .customer-drawer {
+        width: 240px;
+    }
 }

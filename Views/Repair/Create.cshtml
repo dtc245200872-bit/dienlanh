@@ -1,3 +1,4 @@
+@model dienlanh.Models.RepairRequest
 @{
     ViewData["Title"] = "Tạo yêu cầu";
 }
@@ -6,12 +7,17 @@
 
 <form method="post" enctype="multipart/form-data" class="card p-4 shadow">
 
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">@ViewBag.Error</div>
+    }
+
 
 
     <!-- Thiết bị -->
     <div class="mb-3">
         <label>Loại thiết bị</label>
-        <select name="DeviceType" class="form-control" required>
+        <select asp-for="DeviceType" class="form-control" required>
             <option value="">-- Chọn thiết bị --</option>
             <option>Máy lạnh</option>
             <option>Tủ lạnh</option>
@@ -24,25 +30,32 @@
     <!-- Sự cố -->
     <div class="mb-3">
         <label>Sự cố</label>
-        <input type="text" name="Issue" class="form-control" placeholder="Mô tả lỗi..." required />
+        <input asp-for="Issue" type="text" class="form-control" placeholder="Mô tả lỗi..." required />
     </div>
 
     <!-- Địa chỉ -->
     <div class="mb-3">
         <label>Địa chỉ</label>
-        <input type="text" name="Address" class="form-control" required />
+        <input asp-for="Address" type="text" class="form-control" required />
+    </div>
+
+    <!-- Ngày giờ mong muốn -->
+    <div class="mb-3">
+        <label>Ngày giờ mong muốn sửa chữa</label>
+        <input asp-for="PreferredVisitAt" type="datetime-local" class="form-control" required />
+        <small class="text-muted">Bạn có thể gửi yêu cầu 24/7. Khung giờ phục vụ tại nhà: 08:00 - 19:00 mỗi ngày.</small>
     </div>
 
     <!-- SĐT -->
     <div class="mb-3">
         <label>Số điện thoại</label>
-        <input type="text" name="Phone" class="form-control" required />
+        <input asp-for="Phone" type="text" class="form-control" required />
     </div>
 
     <!-- Email -->
     <div class="mb-3">
         <label>Email</label>
-        <input type="email" name="Email" class="form-control" required />
+        <input asp-for="Email" type="email" class="form-control" required />
     </div>
     <div class="mb-3">
         <label>Hình ảnh thiết bị</label>
