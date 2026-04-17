@@ -100,5 +100,37 @@ namespace dienlanh.Controllers
 
             return RedirectToAction("MyRequests");
         }
+
+        [HttpPost]
+        public IActionResult SubmitTechnicianRating(int id, int rating, string comment)
+        {
+            var role = HttpContext.Session.GetString("role");
+            var userId = HttpContext.Session.GetInt32("userId");
+
+            if (role != "customer" || userId == null)
+                return RedirectToAction("Login", "Account");
+
+            var request = _context.RepairRequests.Find(id);
+            if (request == null) return NotFound();
+            if (request.CustomerId != userId) return Forbid();
+
+            if (request.Status != "Đã thanh toán")
+                return BadRequest("Bạn chỉ có thể đánh giá sau khi xác nhận thanh toán.");
+            if (request.TechnicianId == null)
+                return BadRequest("Yêu cầu chưa có kỹ thuật viên để đánh giá.");
+            if (request.TechnicianRating.HasValue)
+                return BadRequest("Bạn đã đánh giá kỹ thuật viên cho yêu cầu này.");
+            if (rating < 1 || rating > 5)
+                return BadRequest("Điểm đánh giá phải từ 1 đến 5 sao.");
+            if (string.IsNullOrWhiteSpace(comment))
+                return BadRequest("Vui lòng nhập nhận xét về kỹ thuật viên.");
+
+            request.TechnicianRating = rating;
+            request.TechnicianRatingComment = comment.Trim();
+            request.TechnicianRatedAt = DateTime.Now;
+            _context.SaveChanges();
+
+            return RedirectToAction("MyRequests");
+        }
     }
 }

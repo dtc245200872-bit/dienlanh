@@ -120,6 +120,36 @@
                                 <button class="btn btn-outline-danger w-100">Báo lỗi cho hệ thống</button>
                             </form>
                         }
+
+                        @if (item.Status == "Đã thanh toán")
+                        {
+                            @if (item.TechnicianRating.HasValue)
+                            {
+                                <div class="alert alert-success p-2 small mt-2 mb-0">
+                                    <b>Đánh giá kỹ thuật viên:</b> @item.TechnicianRating.Value/5 sao
+                                    <br />
+                                    <b>Nhận xét:</b> @item.TechnicianRatingComment
+                                </div>
+                            }
+                            else
+                            {
+                                <form method="post" action="/Customer/SubmitTechnicianRating" class="mt-2">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <label class="form-label fw-semibold mb-1">Đánh giá kỹ thuật viên</label>
+                                    <select class="form-select mb-2" name="rating" required>
+                                        <option value="">-- Chọn số sao --</option>
+                                        <option value="5">5 sao</option>
+                                        <option value="4">4 sao</option>
+                                        <option value="3">3 sao</option>
+                                        <option value="2">2 sao</option>
+                                        <option value="1">1 sao</option>
+                                    </select>
+                                    <textarea class="form-control mb-2" name="comment" rows="2" required
+                                              placeholder="Nhận xét về thái độ, chuyên môn của kỹ thuật viên..."></textarea>
+                                    <button class="btn btn-warning w-100">Gửi đánh giá</button>
+                                </form>
+                            }
+                        }
                     </div>
 
                 </div>

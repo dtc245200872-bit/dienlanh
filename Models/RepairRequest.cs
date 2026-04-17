@@ -41,5 +41,11 @@ namespace dienlanh.Models
         public bool ReportResolved { get; set; }
         public string? ReportResolutionNote { get; set; }
         public DateTime? ResolvedAt { get; set; }
+
+        // Customer rating for technician after payment.
+        [Range(1, 5)]
+        public int? TechnicianRating { get; set; }
+        public string? TechnicianRatingComment { get; set; }
+        public DateTime? TechnicianRatedAt { get; set; }
     }
 }
