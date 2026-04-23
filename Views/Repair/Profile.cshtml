@@ -1,0 +1,273 @@
+@model dienlanh.Models.User
+@{
+    ViewData["Title"] = "Hồ sơ cá nhân";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2 class="page-title">
+                Hồ sơ cá nhân
+            </h2>
+            <p class="text-muted">Cập nhật thông tin và lịch làm việc của bạn</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="profile-card">
+                <div class="card-header">
+                    <h5 class="card-title">Thông tin chung</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-action="UpdateProfile">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">Họ và tên</label>
+                                <input type="text" class="form-control" id="name" name="Name" value="@Model.Name" placeholder="Nhập họ và tên">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" value="@Model.Email" disabled>
+                                <small class="text-muted">Email không thể thay đổi</small>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label">Số điện thoại</label>
+                                <input type="tel" class="form-control" id="phone" name="Phone" value="@Model.Phone" placeholder="Nhập số điện thoại">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="address" class="form-label">Địa chỉ</label>
+                                <input type="text" class="form-control" id="address" name="Address" value="@Model.Address" placeholder="Nhập địa chỉ">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="specializations" class="form-label">Chuyên môn</label>
+                            <textarea class="form-control" id="specializations" name="Specializations" rows="3" placeholder="Nhập các lĩnh vực chuyên môn (cách nhau bởi dấu phẩy)">@Model.Specializations</textarea>
+                            <small class="text-muted">Ví dụ: Điều hòa, Tủ lạnh, Máy giặt</small>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <h5 class="mt-4 mb-3">Lịch làm việc</h5>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="workStartHour" class="form-label">Giờ bắt đầu</label>
+                                <input type="time" class="form-control" id="workStartHour" name="WorkStartHour" value="@Model.WorkStartHour">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="workEndHour" class="form-label">Giờ kết thúc</label>
+                                <input type="time" class="form-control" id="workEndHour" name="WorkEndHour" value="@Model.WorkEndHour">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Trạng thái</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="isAvailable" name="IsAvailable" 
+                                       @(Model.IsAvailable ? "checked" : "") value="true">
+                                <label class="form-check-label" for="isAvailable">
+                                    Tôi sẵn sàng nhận việc
+                                </label>
+                            </div>
+                            <small class="text-muted d-block mt-2">Khi bạn bật tùy chọn này, quản trị viên sẽ có thể giao công việc cho bạn</small>
+                        </div>
+
+                        <div class="button-group">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                Lưu thay đổi
+                            </button>
+                            <a href="@Url.Action("TechnicianDashboard", "Repair")" class="btn btn-secondary btn-lg">
+                                Quay lại
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Statistics Card -->
+            <div class="profile-card">
+                <div class="card-header">
+                    <h5 class="card-title">Thống kê của tôi</h5>
+                </div>
+                <div class="card-body">
+                    <div class="stat-row">
+                        <span class="stat-label">Tổng công việc hoàn thành:</span>
+                        <span class="stat-value">@Model.TotalJobsCompleted</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Đánh giá trung bình:</span>
+                        <span class="stat-value">
+                            @if (Model.AverageRating.HasValue && Model.AverageRating.Value > 0)
+                            {
+                                <span>@Model.AverageRating.Value.ToString("F1") / 5</span>
+                            }
+                            else
+                            {
+                                <span>Chưa có đánh giá</span>
+                            }
+                        </span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Trạng thái:</span>
+                        <span class="stat-value">
+                            @if (Model.IsAvailable)
+                            {
+                                <span class="badge bg-success">
+                                    Sẵn sàng
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">
+                                    Bận
+                                </span>
+                            }
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Work Schedule Info -->
+            <div class="profile-card mt-4">
+                <div class="card-header">
+                    <h5 class="card-title">Giờ làm việc</h5>
+                </div>
+                <div class="card-body">
+                    <div class="schedule-info">
+                        <p>
+                            <strong>Từ:</strong> @Model.WorkStartHour
+                        </p>
+                        <p>
+                            <strong>Đến:</strong> @Model.WorkEndHour
+                        </p>
+                        <p class="text-muted mt-3 mb-0">
+                            <small>Giờ làm việc giúp hệ thống sắp xếp công việc phù hợp với lịch trình của bạn</small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .page-title {
+        color: #2c3e50;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .profile-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+
+    .card-header {
+        background: #f8f9fa;
+        padding: 20px;
+        border-bottom: 1px solid #ecf0f1;
+    }
+
+    .card-title {
+        margin: 0;
+        color: #2c3e50;
+        font-weight: 600;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .divider {
+        height: 1px;
+        background: #ecf0f1;
+        margin: 20px 0;
+    }
+
+    .form-check-label {
+        font-weight: 500;
+        color: #555;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 12px;
+        margin-top: 25px;
+    }
+
+    .button-group .btn {
+        flex: 1;
+    }
+
+    .stat-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #ecf0f1;
+    }
+
+    .stat-row:last-child {
+        border-bottom: none;
+    }
+
+    .stat-label {
+        color: #555;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .stat-value {
+        color: #2c3e50;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .schedule-info p {
+        color: #555;
+        font-size: 14px;
+        margin: 8px 0;
+    }
+
+    .schedule-info strong {
+        color: #2c3e50;
+    }
+
+    @@media (max-width: 768px) {
+        .button-group {
+            flex-direction: column;
+        }
+
+        .button-group .btn {
+            width: 100%;
+        }
+    }
+</style>

@@ -11,6 +11,21 @@ namespace dienlanh.Models
         public decimal TotalRevenue { get; set; }
         public List<DeviceStatsItem> DeviceBreakdown { get; set; } = new();
         public List<StatusStatsItem> StatusBreakdown { get; set; } = new();
+
+        // Time-based statistics
+        public int TodayRequests { get; set; }
+        public int TodayCompletedRequests { get; set; }
+        public decimal TodayRevenue { get; set; }
+
+        public int MonthRequests { get; set; }
+        public int MonthCompletedRequests { get; set; }
+        public decimal MonthRevenue { get; set; }
+
+        public int YearRequests { get; set; }
+        public int YearCompletedRequests { get; set; }
+        public decimal YearRevenue { get; set; }
+
+        public string SelectedPeriod { get; set; } = "all"; // all, day, month, year
     }
 
     public class DeviceStatsItem

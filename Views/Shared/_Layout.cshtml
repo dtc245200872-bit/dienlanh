@@ -14,7 +14,7 @@
     @inject dienlanh.Data.AppDbContext Db
     @{
         var email = Context.Session.GetString("email");
-        var role = Context.Session.GetString("role")?.ToLower(); // 🔥 FIX Ở ĐÂY
+        var role = Context.Session.GetString("role")?.ToLower();
         var homeUrl = "/";
         if (role == "customer")
         {
@@ -47,16 +47,23 @@
 
             <div class="collapse navbar-collapse" id="menu">
 
-                <!-- MENU TRÁI -->
                 <ul class="navbar-nav me-auto">
-
-                    @* CUSTOMER: dùng menu trong trang khách hàng *@
-
-                    @* TECHNICIAN *@
                     @if (role == "technician")
                     {
                         <li class="nav-item">
-                            <a class="nav-link" href="/Repair/MyJobs">Công việc của tôi</a>
+                            <a class="nav-link" href="/Repair/TechnicianDashboard">Bảng điều khiển</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="jobsDropdown" role="button" data-bs-toggle="dropdown">
+                                Công việc
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="jobsDropdown">
+                                <li><a class="dropdown-item" href="/Repair/AssignedTasks">Công việc được phân công</a></li>
+                                <li><a class="dropdown-item" href="/Repair/WorkHistory">Lịch sử công việc</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Repair/Profile">Hồ sơ</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/Device/Index">Thiết bị</a>
@@ -66,7 +73,6 @@
                         </li>
                     }
 
-                    @* ADMIN *@
                     @if (role == "admin")
                     {
                         <li class="nav-item">
@@ -101,7 +107,6 @@
 
                 </ul>
 
-                <!-- USER -->
                 <ul class="navbar-nav">
                     @if (email != null)
                     {
@@ -140,13 +145,11 @@
         </div>
     </nav>
 
-    <!-- CONTENT -->
-    <div class="container mt-4">
+    <main class="container mt-4 main-content">
         @RenderBody()
-    </div>
+    </main>
 
-    <!-- FOOTER -->
-    <footer class="text-center mt-5 p-3 border-top">
+    <footer class="text-center mt-5 p-3 border-top app-footer">
         © 2026 - Hệ thống sửa chữa điện lạnh
     </footer>
 

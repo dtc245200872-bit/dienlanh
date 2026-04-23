@@ -1,0 +1,553 @@
+@model dienlanh.Models.TechnicianDashboardViewModel
+@{
+    ViewData["Title"] = "Bảng điều khiển kỹ thuật viên";
+}
+
+<div class="container-fluid technician-dashboard">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1 class="page-title">
+                Bảng điều khiển kỹ thuật viên
+            </h1>
+            <p class="text-muted">Chào mừng, <strong>@Model.TechnicianProfile.Name</strong></p>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="stat-card stat-assigned">
+                <div class="stat-info">
+                    <div class="stat-value">@Model.TotalAssignedTasks</div>
+                    <div class="stat-label">Công việc chờ nhận</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card stat-today">
+                <div class="stat-info">
+                    <div class="stat-value">@Model.TotalCompletedToday</div>
+                    <div class="stat-label">Hoàn thành hôm nay</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card stat-month">
+                <div class="stat-info">
+                    <div class="stat-value">@Model.TotalCompletedThisMonth</div>
+                    <div class="stat-label">Hoàn thành tháng này</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card stat-rating">
+                <div class="stat-info">
+                    <div class="stat-value">@Model.TechnicianProfile.AverageRating?.ToString("F1") ?? "0.0"</div>
+                    <div class="stat-label">Đánh giá trung bình</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Assigned Tasks Section -->
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h3 class="section-title">
+                        Công việc được phân công
+                    </h3>
+                    <a href="@Url.Action("AssignedTasks", "Repair")" class="btn btn-sm btn-outline-primary">
+                        Xem tất cả
+                    </a>
+                </div>
+                <div class="section-body">
+                    @if (!Model.AssignedTasks.Any())
+                    {
+                        <div class="empty-state">
+                            <p>Không có công việc chờ nhận</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="tasks-list">
+                            @foreach (var task in Model.AssignedTasks.Take(5))
+                            {
+                                <div class="task-card">
+                                    <div class="task-header">
+                                        <span class="device-badge">@task.DeviceType</span>
+                                        <span class="status-badge badge bg-warning text-dark">
+                                            Chuẩn bị
+                                        </span>
+                                    </div>
+                                    <div class="task-content">
+                                        <p class="task-issue">
+                                            <strong>Sự cố:</strong> @task.Issue
+                                        </p>
+                                        <p class="task-address">
+                                            <strong>Địa chỉ:</strong> @task.Address
+                                        </p>
+                                        <p class="task-time">
+                                            <strong>Lịch hẹn:</strong>
+                                            @(task.PreferredVisitAt.HasValue ? task.PreferredVisitAt.Value.ToString("dd/MM/yyyy HH:mm") : "Chưa xác định")
+                                        </p>
+                                    </div>
+                                    <div class="task-actions">
+                                        <a href="/Repair/UpdateStatus?id=@task.Id&status=Đang sửa" class="btn btn-sm btn-primary">
+                                            Nhận việc
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Work History Section -->
+            <div class="dashboard-section mt-4">
+                <div class="section-header">
+                    <h3 class="section-title">
+                        Lịch sử công việc gần đây
+                    </h3>
+                    <a href="@Url.Action("WorkHistory", "Repair")" class="btn btn-sm btn-outline-primary">
+                        Xem lịch sử đầy đủ
+                    </a>
+                </div>
+                <div class="section-body">
+                    @if (!Model.WorkHistory.Any())
+                    {
+                        <div class="empty-state">
+                            <p>Chưa có lịch sử công việc</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="history-table">
+                            <table class="table table-sm table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Thiết bị</th>
+                                        <th>Sự cố</th>
+                                        <th>Ngày</th>
+                                        <th>Trạng thái</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var job in Model.WorkHistory)
+                                    {
+                                        <tr>
+                                            <td>@job.DeviceType</td>
+                                            <td>@job.Issue</td>
+                                            <td>@(job.PreferredVisitAt.HasValue ? job.PreferredVisitAt.Value.ToString("dd/MM/yyyy") : "-")</td>
+                                            <td>
+                                                @switch (job.Status)
+                                                {
+                                                    case "Đang sửa":
+                                                        <span class="badge bg-primary">Đang thực hiện</span>
+                                                        break;
+                                                    case "Hoàn thành":
+                                                    case "Đã thanh toán":
+                                                        <span class="badge bg-success">Hoàn thành</span>
+                                                        break;
+                                                    case "Đã báo lỗi":
+                                                        <span class="badge bg-danger">Báo lỗi</span>
+                                                        break;
+                                                    default:
+                                                        <span class="badge bg-secondary">@job.Status</span>
+                                                        break;
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Profile Card -->
+            <div class="dashboard-section profile-card">
+                <div class="section-header">
+                    <h3 class="section-title">
+                        Hồ sơ của tôi
+                    </h3>
+                    <a href="@Url.Action("Profile", "Repair")" class="btn btn-sm btn-link">
+                        Chỉnh sửa
+                    </a>
+                </div>
+                <div class="section-body">
+                    <div class="profile-info">
+                        <div class="profile-item">
+                            <span class="profile-label">Tên:</span>
+                            <span class="profile-value">@Model.TechnicianProfile.Name</span>
+                        </div>
+                        <div class="profile-item">
+                            <span class="profile-label">Email:</span>
+                            <span class="profile-value">@Model.TechnicianProfile.Email</span>
+                        </div>
+                        <div class="profile-item">
+                            <span class="profile-label">Số điện thoại:</span>
+                            <span class="profile-value">@Model.TechnicianProfile.Phone</span>
+                        </div>
+                        <div class="profile-item">
+                            <span class="profile-label">Chuyên môn:</span>
+                            <span class="profile-value">@Model.TechnicianProfile.Specializations</span>
+                        </div>
+                        <div class="profile-item">
+                            <span class="profile-label">Trạng thái:</span>
+                            <span class="profile-value">
+                                @if (Model.TechnicianProfile.IsAvailable)
+                                {
+                                    <span class="badge bg-success">
+                                        Sẵn sàng
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">
+                                        Bận
+                                    </span>
+                                }
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule Card -->
+            <div class="dashboard-section schedule-card mt-4">
+                <div class="section-header">
+                    <h3 class="section-title">
+                        Lịch làm việc
+                    </h3>
+                    <a href="@Url.Action("Profile", "Repair")" class="btn btn-sm btn-link">
+                        Chỉnh sửa
+                    </a>
+                </div>
+                <div class="section-body">
+                    <div class="schedule-info">
+                        <div class="schedule-item">
+                            <span>
+                                <strong>Giờ làm:</strong> @Model.TechnicianProfile.WorkStartHour - @Model.TechnicianProfile.WorkEndHour
+                            </span>
+                        </div>
+                        <div class="schedule-item">
+                            <span>
+                                <strong>Tổng công việc:</strong> @Model.TechnicianProfile.TotalJobsCompleted
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications Card -->
+            <div class="dashboard-section notification-card mt-4">
+                <div class="section-header">
+                    <h3 class="section-title">
+                        Thông báo
+                        @if (Model.UnreadNotifications > 0)
+                        {
+                            <span class="badge bg-danger">@Model.UnreadNotifications</span>
+                        }
+                    </h3>
+                </div>
+                <div class="section-body">
+                    @if (!Model.Notifications.Any())
+                    {
+                        <div class="empty-state-small">
+                            <p>Không có thông báo mới</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="notifications-list">
+                            @foreach (var notification in Model.Notifications.Take(5))
+                            {
+                                <div class="notification-item @(!notification.IsRead ? "unread" : "")">
+                                    <div class="notification-content">
+                                        <p class="notification-title">@notification.Title</p>
+                                        <p class="notification-time">
+                                            @notification.CreatedAt.ToString("HH:mm dd/MM/yyyy")
+                                        </p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .technician-dashboard {
+        background-color: #f8f9fa;
+        padding: 20px 0;
+        border-radius: 10px;
+        width : 100%;
+        margin: 0 auto;
+    }
+
+    .page-title {
+        color: #2c3e50;
+        font-weight: 800;
+        margin-bottom: 20px;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px);
+    }
+
+    .stat-card.stat-assigned {
+        border-left: 4px solid #667eea;
+    }
+
+    .stat-card.stat-today {
+        border-left: 4px solid #f5576c;
+    }
+
+    .stat-card.stat-month {
+        border-left: 4px solid #00a6d8;
+    }
+
+    .stat-card.stat-rating {
+        border-left: 4px solid #f5b000;
+    }
+
+    .stat-info {
+        flex: 1;
+    }
+
+    .stat-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: #2c3e50;
+    }
+
+    .stat-label {
+        font-size: 12px;
+        color: #7f8c8d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 5px;
+    }
+
+    .dashboard-section {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        border-bottom: 1px solid #ecf0f1;
+    }
+
+    .section-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin: 0;
+    }
+
+    .section-body {
+        padding: 20px;
+    }
+
+    .tasks-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .task-card {
+        border: 1px solid #ecf0f1;
+        border-radius: 8px;
+        padding: 15px;
+        transition: all 0.3s ease;
+    }
+
+    .task-card:hover {
+        border-color: #667eea;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    }
+
+    .task-header {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+        align-items: center;
+    }
+
+    .device-badge {
+        display: inline-block;
+        background: #f0f0f0;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #555;
+    }
+
+    .task-content {
+        margin: 10px 0;
+    }
+
+    .task-issue,
+    .task-address,
+    .task-time {
+        font-size: 13px;
+        margin: 6px 0;
+        color: #555;
+    }
+
+    .task-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 12px;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #95a5a6;
+    }
+
+    .empty-state-small {
+        text-align: center;
+        padding: 20px;
+        color: #95a5a6;
+        font-size: 14px;
+    }
+
+    .history-table {
+        overflow-x: auto;
+    }
+
+    .profile-info {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .profile-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #ecf0f1;
+    }
+
+    .profile-item:last-child {
+        border-bottom: none;
+    }
+
+    .profile-label {
+        font-weight: 600;
+        color: #555;
+        font-size: 13px;
+    }
+
+    .profile-value {
+        color: #2c3e50;
+        font-size: 13px;
+    }
+
+    .schedule-info {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .schedule-item {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 6px;
+        font-size: 13px;
+        color: #555;
+    }
+
+    .notifications-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .notification-item {
+        display: flex;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 6px;
+        background: #f8f9fa;
+        transition: all 0.3s ease;
+    }
+
+    .notification-item.unread {
+        background: #e7f3ff;
+        border-left: 3px solid #667eea;
+    }
+
+    .notification-content {
+        flex: 1;
+    }
+
+    .notification-title {
+        font-weight: 600;
+        color: #2c3e50;
+        font-size: 12px;
+        margin: 0;
+    }
+
+    .notification-time {
+        font-size: 11px;
+        color: #95a5a6;
+        margin: 3px 0 0 0;
+    }
+
+    @@media (max-width: 768px) {
+        .stat-card {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .task-actions {
+            width: 100%;
+        }
+
+        .task-actions .btn {
+            flex: 1;
+        }
+    }
+</style>

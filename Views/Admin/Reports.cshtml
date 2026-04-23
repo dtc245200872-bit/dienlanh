@@ -1,58 +1,65 @@
 @model List<dienlanh.Models.RepairRequest>
 
-<h2 class="mb-4">Báo lỗi từ khách hàng</h2>
+<div class="page-header">
+    <div>
+        <h2 class="page-title">Báo lỗi từ khách hàng</h2>
+        <p class="page-subtitle">Theo dõi các phản hồi sau sửa chữa và cập nhật kết quả xử lý.</p>
+    </div>
+</div>
 
-<table class="table table-bordered table-hover">
-    <thead class="table-light">
-        <tr>
-            <th>Thiết bị</th>
-            <th>Địa chỉ</th>
-            <th>Nội dung báo lỗi</th>
-            <th>Thời gian</th>
-            <th>Trạng thái xử lý</th>
-            <th>Thao tác</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (!Model.Any())
-        {
+<div class="app-table-wrap">
+    <table class="table table-hover align-middle">
+        <thead>
             <tr>
-                <td colspan="6" class="text-center text-muted">Chưa có báo lỗi nào.</td>
+                <th>Thiết bị</th>
+                <th>Địa chỉ</th>
+                <th>Nội dung báo lỗi</th>
+                <th>Thời gian</th>
+                <th>Trạng thái xử lý</th>
+                <th>Thao tác</th>
             </tr>
-        }
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.DeviceType</td>
-                <td>@item.Address</td>
-                <td>@item.CustomerReportNote</td>
-                <td>@item.ReportedAt?.ToString("dd/MM/yyyy HH:mm")</td>
-                <td>
-                    @if (item.ReportResolved)
-                    {
-                        <span class="badge bg-success">Đã xử lý</span>
-                        <div class="small text-muted mt-1">@item.ReportResolutionNote</div>
-                    }
-                    else
-                    {
-                        <span class="badge bg-danger">Chờ xử lý</span>
-                    }
-                </td>
-                <td style="min-width: 220px;">
-                    @if (!item.ReportResolved)
-                    {
-                        <form method="post" action="/Admin/ResolveReport">
-                            <input type="hidden" name="id" value="@item.Id" />
-                            <textarea class="form-control mb-2" name="resolutionNote" rows="2" placeholder="Ghi chú xử lý..."></textarea>
-                            <button class="btn btn-sm btn-primary w-100">Đánh dấu đã xử lý</button>
-                        </form>
-                    }
-                    else
-                    {
-                        <span class="text-muted">---</span>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="6" class="empty-state">Chưa có báo lỗi nào.</td>
+                </tr>
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.DeviceType</td>
+                    <td>@item.Address</td>
+                    <td>@item.CustomerReportNote</td>
+                    <td>@item.ReportedAt?.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>
+                        @if (item.ReportResolved)
+                        {
+                            <span class="badge bg-success">Đã xử lý</span>
+                            <div class="small text-muted mt-1">@item.ReportResolutionNote</div>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Chờ xử lý</span>
+                        }
+                    </td>
+                    <td style="min-width: 220px;">
+                        @if (!item.ReportResolved)
+                        {
+                            <form method="post" action="/Admin/ResolveReport">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <textarea class="form-control mb-2" name="resolutionNote" rows="2" placeholder="Ghi chú xử lý..."></textarea>
+                                <button class="btn btn-sm btn-primary w-100">Đánh dấu đã xử lý</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span class="text-muted">---</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

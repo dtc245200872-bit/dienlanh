@@ -116,6 +116,171 @@ namespace dienlanh.Controllers
             return View(jobs);
         }
 
+        // 🔥 Technician Dashboard
+        public IActionResult TechnicianDashboard()
+        {
+            var role = HttpContext.Session.GetString("role");
+            var userId = HttpContext.Session.GetInt32("userId");
+
+            if (role != "technician" || userId == null)
+                return RedirectToAction("Login", "Account");
+
+            var technician = _context.Users.Find(userId);
+            if (technician == null)
+                return NotFound();
+
+            var today = DateTime.Now.Date;
+
+            // Assigned tasks (waiting to be accepted)
+            var assignedTasks = _context.RepairRequests
+                .Where(r => r.TechnicianId == userId && r.Status == "Đã phân công")
+                .OrderBy(r => r.PreferredVisitAt)
+                .ToList();
+
+            // Work history (completed and other statuses)
+            var workHistory = _context.RepairRequests
+                .Where(r => r.TechnicianId == userId && r.Status != "Đã phân công")
+                .OrderByDescending(r => r.PreferredVisitAt)
+                .ToList();
+
+            // Statistics
+            int totalCompleted = _context.RepairRequests
+                .Count(r => r.TechnicianId == userId && 
+                       (r.Status == "Hoàn thành" || r.Status == "Đã thanh toán"));
+
+            int completedToday = _context.RepairRequests
+                .Count(r => r.TechnicianId == userId && 
+                       (r.Status == "Hoàn thành" || r.Status == "Đã thanh toán") &&
+                       r.PreferredVisitAt.HasValue && r.PreferredVisitAt.Value.Date == today);
+
+            var monthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            int completedThisMonth = _context.RepairRequests
+                .Count(r => r.TechnicianId == userId && 
+                       (r.Status == "Hoàn thành" || r.Status == "Đã thanh toán") &&
+                       r.PreferredVisitAt.HasValue && r.PreferredVisitAt.Value >= monthStart);
+
+            var model = new TechnicianDashboardViewModel
+            {
+                TechnicianProfile = technician,
+                AssignedTasks = assignedTasks,
+                WorkHistory = workHistory.Take(10).ToList(), // Latest 10 jobs
+                TotalAssignedTasks = assignedTasks.Count,
+                TotalCompletedToday = completedToday,
+                TotalCompletedThisMonth = completedThisMonth,
+                UnreadNotifications = 0, // Placeholder for future notifications feature
+                Notifications = new(),
+                Schedule = new()
+                {
+                    TechnicianId = userId.Value,
+                    WeeklySchedule = GenerateDefaultSchedule()
+                }
+            };
+
+            return View(model);
+        }
+
+        // 🔥 Assigned Tasks View
+        public IActionResult AssignedTasks()
+        {
+            var role = HttpContext.Session.GetString("role");
+            var userId = HttpContext.Session.GetInt32("userId");
+
+            if (role != "technician" || userId == null)
+                return RedirectToAction("Login", "Account");
+
+            var assignedTasks = _context.RepairRequests
+                .Where(r => r.TechnicianId == userId && r.Status == "Đã phân công")
+                .OrderBy(r => r.PreferredVisitAt)
+                .ToList();
+
+            return View(assignedTasks);
+        }
+
+        // 🔥 Work History View
+        public IActionResult WorkHistory()
+        {
+            var role = HttpContext.Session.GetString("role");
+            var userId = HttpContext.Session.GetInt32("userId");
+
+            if (role != "technician" || userId == null)
+                return RedirectToAction("Login", "Account");
+
+            var workHistory = _context.RepairRequests
+                .Where(r => r.TechnicianId == userId && r.Status != "Đã phân công")
+                .OrderByDescending(r => r.PreferredVisitAt)
+                .ToList();
+
+            return View(workHistory);
+        }
+
+        // 🔥 Technician Profile View
+        public IActionResult Profile()
+        {
+            var role = HttpContext.Session.GetString("role");
+            var userId = HttpContext.Session.GetInt32("userId");
+
+            if (role != "technician" || userId == null)
+                return RedirectToAction("Login", "Account");
+
+            var technician = _context.Users.Find(userId);
+            if (technician == null)
+                return NotFound();
+
+            var averageRating = (decimal?)_context.RepairRequests
+                .Where(r => r.TechnicianId == userId && r.TechnicianRating.HasValue)
+                .Average(r => (double?)r.TechnicianRating) ?? 0m;
+
+            technician.AverageRating = averageRating;
+            technician.TotalJobsCompleted = _context.RepairRequests
+                .Count(r => r.TechnicianId == userId && 
+                       (r.Status == "Hoàn thành" || r.Status == "Đã thanh toán"));
+
+            return View(technician);
+        }
+
+        // 🔥 Update Technician Profile
+        [HttpPost]
+        public IActionResult UpdateProfile(User model)
+        {
+            var role = HttpContext.Session.GetString("role");
+            var userId = HttpContext.Session.GetInt32("userId");
+
+            if (role != "technician" || userId == null)
+                return RedirectToAction("Login", "Account");
+
+            var technician = _context.Users.Find(userId);
+            if (technician == null)
+                return NotFound();
+
+            technician.Name = model.Name;
+            technician.Phone = model.Phone;
+            technician.Address = model.Address;
+            technician.Specializations = model.Specializations;
+            technician.WorkStartHour = model.WorkStartHour;
+            technician.WorkEndHour = model.WorkEndHour;
+
+            _context.SaveChanges();
+
+            return RedirectToAction("Profile");
+        }
+
+        // Helper method to generate default schedule
+        private List<ScheduleEntry> GenerateDefaultSchedule()
+        {
+            var schedule = new List<ScheduleEntry>();
+            for (int i = 0; i < 7; i++)
+            {
+                schedule.Add(new ScheduleEntry
+                {
+                    DayOfWeek = (DayOfWeek)i,
+                    StartTime = new TimeSpan(8, 0, 0),
+                    EndTime = new TimeSpan(19, 0, 0),
+                    IsWorkDay = i < 6 // Monday to Saturday are work days
+                });
+            }
+            return schedule;
+        }
+
         // 🔥 Assign (Admin)
         public IActionResult Assign(int id)
         {

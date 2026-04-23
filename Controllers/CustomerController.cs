@@ -132,5 +132,108 @@ namespace dienlanh.Controllers
 
             return RedirectToAction("MyRequests");
         }
+
+        // Cancel Request - if admin hasn't confirmed and assigned
+        public IActionResult CancelRequest()
+        {
+            var role = HttpContext.Session.GetString("role");
+            var userId = HttpContext.Session.GetInt32("userId");
+
+            if (string.IsNullOrEmpty(role) || role != "customer")
+                return RedirectToAction("Login", "Account");
+
+            var list = _context.RepairRequests
+                .Where(r => r.CustomerId == userId && 
+                       (r.Status == "Chờ xử lý" || r.Status == "Đã phân công"))
+                .ToList();
+
+            return View(list);
+        }
+
+        [HttpPost]
+        public IActionResult CancelRequestConfirm(int id)
+        {
+            var role = HttpContext.Session.GetString("role");
+            var userId = HttpContext.Session.GetInt32("userId");
+
+            if (role != "customer" || userId == null)
+                return RedirectToAction("Login", "Account");
+
+            var request = _context.RepairRequests.Find(id);
+            if (request == null) return NotFound();
+            if (request.CustomerId != userId) return Forbid();
+
+            // Only allow cancellation if not yet confirmed/assigned
+            if (request.Status != "Chờ xử lý" && request.Status != "Đã phân công")
+                return BadRequest("Không thể hủy yêu cầu ở trạng thái này.");
+
+            request.Status = "Đã hủy";
+            _context.SaveChanges();
+
+            TempData["SuccessMessage"] = "Yêu cầu đã được hủy thành công.";
+            return RedirectToAction("MyRequests");
+        }
+
+        // Update Status from Technician
+        public IActionResult UpdateStatus()
+        {
+            var role = HttpContext.Session.GetString("role");
+            var userId = HttpContext.Session.GetInt32("userId");
+
+            if (string.IsNullOrEmpty(role) || role != "customer")
+                return RedirectToAction("Login", "Account");
+
+            var list = _context.RepairRequests
+                .Where(r => r.CustomerId == userId)
+                .OrderByDescending(r => r.PreferredVisitAt)
+                .ToList();
+
+            return View(list);
+        }
+
+        // View Reviews (separated from MyRequests)
+        public IActionResult Reviews()
+        {
+            var role = HttpContext.Session.GetString("role");
+            var userId = HttpContext.Session.GetInt32("userId");
+
+            if (string.IsNullOrEmpty(role) || role != "customer")
+                return RedirectToAction("Login", "Account");
+
+            var reviewedRequests = _context.RepairRequests
+                .Where(r => r.CustomerId == userId && r.TechnicianRating.HasValue)
+                .OrderByDescending(r => r.TechnicianRatedAt)
+                .ToList();
+
+            return View(reviewedRequests);
+        }
+
+        // Report History
+        public IActionResult ReportHistory()
+        {
+            var role = HttpContext.Session.GetString("role");
+            var userId = HttpContext.Session.GetInt32("userId");
+
+            if (string.IsNullOrEmpty(role) || role != "customer")
+                return RedirectToAction("Login", "Account");
+
+            var reportedRequests = _context.RepairRequests
+                .Where(r => r.CustomerId == userId && r.CustomerReported)
+                .OrderByDescending(r => r.ReportedAt)
+                .ToList();
+
+            return View(reportedRequests);
+        }
+
+        // Customer Support Page
+        public IActionResult Support()
+        {
+            var role = HttpContext.Session.GetString("role");
+
+            if (string.IsNullOrEmpty(role) || role != "customer")
+                return RedirectToAction("Login", "Account");
+
+            return View();
+        }
     }
 }

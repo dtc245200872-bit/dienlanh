@@ -1,14 +1,63 @@
-﻿<h2>Phân công kỹ thuật viên</h2>
+<div class="page-header">
+    <div>
+        <h2 class="page-title">Phân công kỹ thuật viên</h2>
+        <p class="page-subtitle">Chọn một kỹ thuật viên phù hợp để xử lý yêu cầu này.</p>
+    </div>
+</div>
 
 <form method="post">
     <input type="hidden" name="requestId" value="@ViewBag.RequestId" />
+    <input type="hidden" name="technicianId" id="selectedTechnicianId" />
 
-    <select name="technicianId">
+    <div class="row g-3 mb-3">
         @foreach (var tech in ViewBag.Techs)
         {
-            <option value="@tech.Id">@tech.Email</option>
+            <div class="col-md-4 col-lg-3">
+                <div class="section-card p-3 h-100 technician-card" data-technician-id="@tech.Id">
+                    <p class="mb-1 fw-semibold">@(tech.Name ?? "Chưa cập nhật tên")</p>
+                    <p class="mb-1 small text-muted">@tech.Email</p>
+                    @if (!string.IsNullOrEmpty(tech.Phone))
+                    {
+                        <p class="mb-1 small text-muted">@tech.Phone</p>
+                    }
+                    <p class="mb-0 small text-muted">Mã nhân viên: @tech.Id</p>
+                </div>
+            </div>
         }
-    </select>
+    </div>
 
-    <button type="submit">Gán</button>
+    <div class="d-flex gap-2">
+        <button type="submit" id="assignBtn" disabled class="btn btn-primary">Xác nhận phân công</button>
+        <a href="@Url.Action("Requests", "Admin")" class="btn btn-outline-secondary">Hủy</a>
+    </div>
 </form>
+
+<style>
+    .technician-card {
+        border: 2px solid #ddd;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .technician-card:hover {
+        border-color: #007bff;
+        background-color: #f8f9fa;
+    }
+
+    .technician-card.selected {
+        border-color: #28a745;
+        background-color: #e8f5e9;
+    }
+</style>
+
+<script>
+    document.querySelectorAll('.technician-card').forEach(card => {
+        card.addEventListener('click', function () {
+            document.querySelectorAll('.technician-card').forEach(c => c.classList.remove('selected'));
+            this.classList.add('selected');
+            document.getElementById('selectedTechnicianId').value = this.dataset.technicianId;
+            document.getElementById('assignBtn').disabled = false;
+        });
+    });
+</script>
+

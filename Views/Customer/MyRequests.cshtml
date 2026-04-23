@@ -1,38 +1,36 @@
 @model List<dienlanh.Models.RepairRequest>
 
-<h2 class="mb-4 fw-bold">Yêu cầu của tôi</h2>
+<div class="page-header">
+    <div>
+        <h2 class="page-title">Yêu cầu của tôi</h2>
+        <p class="page-subtitle">Theo dõi trạng thái xử lý, thanh toán và đánh giá cho từng yêu cầu sửa chữa.</p>
+    </div>
+</div>
 
-<div class="row">
-    @foreach (var item in Model)
-    {
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card shadow-sm border-0 h-100">
-
-                <!-- ẢNH -->
+<div class="section-card p-3">
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="section-card h-100">
                 <img src="@(item.ImagePath ?? "/images/no-image.png")"
-                     class="card-img-top"
-                     style="height:200px; object-fit:cover;" />
+                     class="card-img-top customer-request-image" />
 
                 <div class="card-body d-flex flex-column">
-
-                    <!-- TÊN -->
                     <h5 class="card-title fw-bold text-primary">
                         @item.DeviceType
                     </h5>
 
-                    <!-- MÔ TẢ -->
                     <p class="text-muted mb-2">
                         @item.Issue
                     </p>
 
-                    <!-- ĐỊA CHỈ -->
                     <p class="small text-secondary">@item.Address</p>
                     <p class="small text-secondary mb-2">
                         <b>Lịch hẹn mong muốn:</b>
                         @(item.PreferredVisitAt.HasValue ? item.PreferredVisitAt.Value.ToString("dd/MM/yyyy HH:mm") : "Chưa chọn")
                     </p>
 
-                    <!-- TRẠNG THÁI -->
                     <div class="mb-3">
                         @if (item.Status == "Chờ xử lý")
                         {
@@ -89,8 +87,11 @@
                         }
                     }
 
-                    <!-- NÚT -->
                     <div class="mt-auto">
+                        <button type="button" class="btn btn-info btn-sm w-100 mb-2" data-bs-toggle="modal" data-bs-target="#detailModal@item.Id">
+                            <i class="fas fa-info-circle"></i> Chi tiết yêu cầu
+                        </button>
+
                         @if (item.Status == "Chờ khách xác nhận linh kiện")
                         {
                             <form method="post" action="/Customer/ConfirmParts" class="mb-2">
@@ -155,5 +156,156 @@
                 </div>
             </div>
         </div>
-    }
+        }
+    </div>
 </div>
+
+<!-- Detail Modals -->
+@foreach (var item in Model)
+{
+    <div class="modal fade" id="detailModal@item.Id" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title">
+                        <i class="fas fa-info-circle"></i> Chi tiết yêu cầu sửa chữa
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="text-primary fw-bold mb-2">Thông tin thiết bị</h6>
+                            <dl class="row small">
+                                <dt class="col-sm-5">Loại thiết bị:</dt>
+                                <dd class="col-sm-7">@item.DeviceType</dd>
+                                <dt class="col-sm-5">Sự cố:</dt>
+                                <dd class="col-sm-7">@item.Issue</dd>
+                                @if (!string.IsNullOrEmpty(item.ReplacedParts))
+                                {
+                                    <dt class="col-sm-5">Linh kiện thay:</dt>
+                                    <dd class="col-sm-7">@item.ReplacedParts</dd>
+                                }
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-primary fw-bold mb-2">Thông tin địa chỉ</h6>
+                            <dl class="row small">
+                                <dt class="col-sm-5">Địa chỉ:</dt>
+                                <dd class="col-sm-7">@item.Address</dd>
+                                <dt class="col-sm-5">Điện thoại:</dt>
+                                <dd class="col-sm-7">@item.Phone</dd>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="text-primary fw-bold mb-2">Trạng thái</h6>
+                            <dl class="row small">
+                                <dt class="col-sm-5">Tình trạng:</dt>
+                                <dd class="col-sm-7">
+                                    @if (item.Status == "Chờ xử lý")
+                                    {
+                                        <span class="badge bg-secondary">Chờ xử lý</span>
+                                    }
+                                    else if (item.Status == "Đã phân công")
+                                    {
+                                        <span class="badge bg-warning text-dark">Đã phân công</span>
+                                    }
+                                    else if (item.Status == "Đang sửa")
+                                    {
+                                        <span class="badge bg-primary">Đang sửa</span>
+                                    }
+                                    else if (item.Status == "Chờ khách xác nhận linh kiện")
+                                    {
+                                        <span class="badge bg-warning text-dark">Chờ xác nhận linh kiện</span>
+                                    }
+                                    else if (item.Status == "Chờ thanh toán")
+                                    {
+                                        <span class="badge bg-info text-dark">Chờ thanh toán</span>
+                                    }
+                                    else if (item.Status == "Hoàn thành" || item.Status == "Đã hoàn thành")
+                                    {
+                                        <span class="badge bg-success">Hoàn thành</span>
+                                    }
+                                    else if (item.Status == "Đã thanh toán")
+                                    {
+                                        <span class="badge bg-success">Đã thanh toán</span>
+                                    }
+                                    else if (item.Status == "Đã báo lỗi")
+                                    {
+                                        <span class="badge bg-danger">Đã báo lỗi</span>
+                                    }
+                                </dd>
+                                <dt class="col-sm-5">Lịch hẹn:</dt>
+                                <dd class="col-sm-7">@(item.PreferredVisitAt.HasValue ? item.PreferredVisitAt.Value.ToString("dd/MM/yyyy HH:mm") : "-")</dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-primary fw-bold mb-2">Chi phí</h6>
+                            <dl class="row small">
+                                @if (item.FinalAmount.HasValue)
+                                {
+                                    <dt class="col-sm-5">Tổng tiền:</dt>
+                                    <dd class="col-sm-7 fw-bold text-danger">@item.FinalAmount.Value.ToString("N0")đ</dd>
+                                }
+                                <dt class="col-sm-5">Trạng thái:</dt>
+                                <dd class="col-sm-7">
+                                    @if (item.Status == "Đã thanh toán")
+                                    {
+                                        <span class="text-success">Đã thanh toán</span>
+                                    }
+                                    else if (item.Status == "Chờ thanh toán")
+                                    {
+                                        <span class="text-warning">Chờ thanh toán</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Chưa xác định</span>
+                                    }
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(item.ImagePath))
+                    {
+                        <hr />
+                        <h6 class="text-primary fw-bold mb-2">Hình ảnh thiết bị</h6>
+                        <img src="@item.ImagePath" class="img-fluid rounded" style="max-height: 300px; width: 100%; object-fit: cover;" />
+                    }
+
+                    @if (item.TechnicianRating.HasValue)
+                    {
+                        <hr />
+                        <h6 class="text-primary fw-bold mb-2">Đánh giá từ khách hàng</h6>
+                        <div class="small">
+                            <p class="mb-1">
+                                <b>Điểm đánh giá:</b>
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= item.TechnicianRating)
+                                    {
+                                        <i class="fas fa-star text-warning"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="far fa-star text-secondary"></i>
+                                    }
+                                }
+                                <span class="ms-2">@item.TechnicianRating/5</span>
+                            </p>
+                            <p class="mb-0"><b>Nhận xét:</b> @item.TechnicianRatingComment</p>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

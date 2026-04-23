@@ -1,23 +1,120 @@
 @model dienlanh.Models.User
 
-<h2 class="mb-4">Thông tin tài khoản</h2>
+@{
+    ViewData["Title"] = "Thông tin tài khoản";
+}
 
-<div class="card shadow-sm border-0" style="max-width: 540px;">
-    <div class="card-body">
-        <div class="mb-3">
-            <label class="form-label text-muted">Họ tên</label>
-            <div class="fw-semibold">@(string.IsNullOrWhiteSpace(Model.Name) ? "Chưa cập nhật" : Model.Name)</div>
-        </div>
-        <div class="mb-3">
-            <label class="form-label text-muted">Email</label>
-            <div class="fw-semibold">@Model.Email</div>
-        </div>
-        <div class="mb-3">
-            <label class="form-label text-muted">Vai trò</label>
-            <div class="fw-semibold text-capitalize">@Model.Role</div>
-        </div>
-        <div class="text-muted small">
-            Mã tài khoản: #@Model.Id
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">
+                            <i class="fas fa-user-circle"></i> Thông tin tài khoản
+                        </h4>
+                        <a href="@Url.Action("Edit", "Account")" class="btn btn-light btn-sm">
+                            <i class="fas fa-edit"></i> Chỉnh sửa
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card-body p-4">
+                    @if (TempData["Message"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle"></i> @TempData["Message"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    <!-- Full Name -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="text-muted fw-semibold">
+                                <i class="fas fa-user"></i> Họ và tên:
+                            </label>
+                        </div>
+                        <div class="col-md-8">
+                            <span>@(string.IsNullOrWhiteSpace(Model.Name) ? "Chưa cập nhật" : Model.Name)</span>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Email -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="text-muted fw-semibold">
+                                <i class="fas fa-envelope"></i> Email:
+                            </label>
+                        </div>
+                        <div class="col-md-8">
+                            <span>@Model.Email</span>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Phone -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="text-muted fw-semibold">
+                                <i class="fas fa-phone"></i> Số điện thoại:
+                            </label>
+                        </div>
+                        <div class="col-md-8">
+                            <span>@(string.IsNullOrWhiteSpace(Model.Phone) ? "Chưa cập nhật" : Model.Phone)</span>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Address -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="text-muted fw-semibold">
+                                <i class="fas fa-map-marker-alt"></i> Địa chỉ:
+                            </label>
+                        </div>
+                        <div class="col-md-8">
+                            <span>@(string.IsNullOrWhiteSpace(Model.Address) ? "Chưa cập nhật" : Model.Address)</span>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Role -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="text-muted fw-semibold">
+                                <i class="fas fa-id-card"></i> Vai trò:
+                            </label>
+                        </div>
+                        <div class="col-md-8">
+                            <span class="badge bg-info">@Model.Role</span>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="text-muted small">
+                        Mã tài khoản: #@Model.Id
+                    </div>
+
+                    <hr>
+
+                    <!-- Action Buttons -->
+                    <div class="mt-4 d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="@Url.Action("Home", "Customer")" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Quay lại
+                        </a>
+                        <a href="@Url.Action("Edit", "Account")" class="btn btn-primary">
+                            <i class="fas fa-edit"></i> Chỉnh sửa
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

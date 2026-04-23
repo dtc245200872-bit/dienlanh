@@ -1,0 +1,93 @@
+@model List<dienlanh.Models.RepairRequest>
+
+<div class="page-header">
+    <div>
+        <h2 class="page-title">Cập nhật trạng thái từ kỹ thuật viên</h2>
+        <p class="page-subtitle">Xem những cập nhật mới nhất từ kỹ thuật viên của bạn.</p>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info" role="alert">
+        <i class="fas fa-info-circle"></i>
+        <strong>Chưa có yêu cầu</strong>
+        <p class="mb-0">Bạn chưa tạo yêu cầu sửa chữa nào.</p>
+    </div>
+}
+else
+{
+    <div class="row">
+        @foreach (var request in Model)
+        {
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="section-card h-100">
+                    <img src="@(request.ImagePath ?? "/images/no-image.png")"
+                         class="card-img-top customer-request-image" alt="@request.DeviceType" />
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title fw-bold text-primary">
+                            <i class="fas fa-tools"></i> @request.DeviceType
+                        </h5>
+                        <p class="text-muted mb-2">@request.Issue</p>
+                        <div class="mb-3">
+                            @if (request.Status == "Chờ xử lý")
+                            {
+                                <span class="badge bg-secondary">Chờ xử lý</span>
+                            }
+                            else if (request.Status == "Đã phân công")
+                            {
+                                <span class="badge bg-warning text-dark">Đã phân công</span>
+                            }
+                            else if (request.Status == "Đang sửa")
+                            {
+                                <span class="badge bg-primary">Đang sửa</span>
+                                <p class="mt-2 small"><b>Kỹ thuật viên:</b> @(request.TechnicianId.HasValue ? "Đã gán" : "Chưa gán")</p>
+                            }
+                            else if (request.Status == "Chờ khách xác nhận linh kiện")
+                            {
+                                <span class="badge bg-warning text-dark">Chờ xác nhận linh kiện</span>
+                            }
+                            else if (request.Status == "Chờ thanh toán")
+                            {
+                                <span class="badge bg-info text-dark">Chờ thanh toán</span>
+                            }
+                            else if (request.Status == "Hoàn thành" || request.Status == "Đã hoàn thành")
+                            {
+                                <span class="badge bg-success">Hoàn thành</span>
+                            }
+                            else if (request.Status == "Đã thanh toán")
+                            {
+                                <span class="badge bg-success">Đã thanh toán</span>
+                            }
+                            else if (request.Status == "Đã báo lỗi")
+                            {
+                                <span class="badge bg-danger">Đã báo lỗi</span>
+                            }
+                        </div>
+
+                        @if (!string.IsNullOrWhiteSpace(request.ReplacedParts))
+                        {
+                            <p class="small mb-1"><b>Linh kiện đã thay:</b> @request.ReplacedParts</p>
+                        }
+                        @if (request.FinalAmount != null)
+                        {
+                            <p class="small mb-2"><b>Tổng tiền:</b> @request.FinalAmount.Value.ToString("N0")đ</p>
+                        }
+
+                        <div class="mt-auto pt-3 border-top">
+                            <p class="small text-muted mb-0">
+                                <b>Lịch hẹn:</b> @(request.PreferredVisitAt.HasValue ? request.PreferredVisitAt.Value.ToString("dd/MM/yyyy HH:mm") : "Chưa chọn")
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<div class="mt-4">
+    <a href="/Customer/Home" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> Quay lại trang chủ
+    </a>
+</div>

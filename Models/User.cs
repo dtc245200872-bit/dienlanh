@@ -23,5 +23,13 @@ namespace dienlanh.Models
 
         // Comma-separated or free-text list of equipment specializations.
         public string? Specializations { get; set; }
+
+        // Technician profile information
+        public string? Address { get; set; }
+        public string? WorkStartHour { get; set; } = "08:00"; // Default 08:00
+        public string? WorkEndHour { get; set; } = "19:00"; // Default 19:00
+        public int? TotalJobsCompleted { get; set; } = 0;
+        public decimal? AverageRating { get; set; } = 0m;
+        public bool IsAvailable { get; set; } = true;
     }
 }

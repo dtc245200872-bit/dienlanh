@@ -85,10 +85,61 @@ namespace dienlanh.Controllers
             return View(user);
         }
 
+        // GET: Edit Profile
+        public IActionResult Edit()
+        {
+            var userId = HttpContext.Session.GetInt32("userId");
+            if (userId == null)
+                return RedirectToAction("Login");
+
+            var user = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
+            if (user == null)
+            {
+                HttpContext.Session.Clear();
+                return RedirectToAction("Login");
+            }
+
+            return View(user);
+        }
+
+        // POST: Update Profile
+        [HttpPost]
+        public IActionResult Edit(User updatedUser)
+        {
+            var userId = HttpContext.Session.GetInt32("userId");
+            if (userId == null)
+                return RedirectToAction("Login");
+
+            var user = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
+            if (user == null)
+            {
+                HttpContext.Session.Clear();
+                return RedirectToAction("Login");
+            }
+
+            // Update allowed fields
+            user.Name = updatedUser.Name ?? user.Name;
+            user.Email = updatedUser.Email ?? user.Email;
+            user.Phone = updatedUser.Phone ?? user.Phone;
+            user.Address = updatedUser.Address ?? user.Address;
+
+            // Update password only if provided
+            if (!string.IsNullOrWhiteSpace(updatedUser.Password))
+            {
+                user.Password = updatedUser.Password;
+            }
+
+            _context.Users.Update(user);
+            _context.SaveChanges();
+
+            TempData["Message"] = "Cập nhật thông tin thành công!";
+            return RedirectToAction("Profile");
+        }
+
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
             return RedirectToAction("Login");
         }
     }
-    }
+}

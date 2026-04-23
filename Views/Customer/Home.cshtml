@@ -1,32 +1,157 @@
-<div class="customer-home-header">
-    <h1>Chào mừng khách hàng</h1>
-    <p>Vui lòng chọn chức năng từ menu để tiếp tục.</p>
-</div>
-
-<section class="customer-hero" id="customerHero">
-    <button type="button" class="customer-hamburger" id="customerMenuToggle" aria-label="Mở menu khách hàng">
-        <span></span>
-        <span></span>
-        <span></span>
+<div class="customer-page-container">
+    <!-- Menu Toggle Button -->
+    <button type="button" class="customer-menu-toggle" id="menuToggle" aria-label="Mở/Đóng menu">
+        <span class="toggle-icon">
+            <i class="fas fa-bars"></i>
+        </span>
+        <span class="toggle-text">Menu</span>
     </button>
 
-    <aside class="customer-drawer" id="customerDrawer">
-        <a class="customer-menu-item" href="/Repair/Create">Tạo yêu cầu sửa chữa</a>
-        <a class="customer-menu-item" href="/Customer/MyRequests">Yêu cầu của tôi</a>
-        <a class="customer-menu-item" href="/Repair/History">Lịch sử sửa chữa</a>
-        <a class="customer-menu-item" href="/Account/Profile">Thông tin tài khoản</a>
+    <!-- Sidebar Menu -->
+    <aside class="customer-hero-menu" id="sidebarMenu">
+        <div class="menu-header">
+            <h4 class="menu-title">DienLanh</h4>
+            <button type="button" class="customer-menu-close" id="menuClose" aria-label="Đóng menu">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Quản lý yêu cầu Section -->
+        <div class="customer-menu-section">
+            <h6 class="customer-menu-section-title">Quản lý yêu cầu</h6>
+            <a class="customer-menu-item" href="/Repair/Create">
+                <i class="fas fa-plus-circle"></i> Tạo yêu cầu sửa chữa
+            </a>
+            <a class="customer-menu-item" href="/Customer/MyRequests">
+                <i class="fas fa-list"></i> Yêu cầu của tôi
+            </a>
+            <a class="customer-menu-item" href="/Customer/MyRequests#details">
+                <i class="fas fa-info-circle"></i> Chi tiết yêu cầu
+            </a>
+            <a class="customer-menu-item" href="/Customer/CancelRequest">
+                <i class="fas fa-times-circle"></i> Hủy yêu cầu
+            </a>
+        </div>
+
+        <!-- Cập nhật trạng thái Section -->
+        <div class="customer-menu-section">
+            <h6 class="customer-menu-section-title">Cập nhật trạng thái</h6>
+            <a class="customer-menu-item" href="/Customer/UpdateStatus">
+                <i class="fas fa-sync-alt"></i> Cập nhật từ kỹ thuật viên
+            </a>
+        </div>
+
+        <!-- Đánh giá & Nhận xét Section -->
+        <div class="customer-menu-section">
+            <h6 class="customer-menu-section-title">Đánh giá & Nhận xét</h6>
+            <a class="customer-menu-item" href="/Customer/Reviews">
+                <i class="fas fa-star"></i> Đánh giá kỹ thuật viên
+            </a>
+            <a class="customer-menu-item" href="/Customer/ReportHistory">
+                <i class="fas fa-flag"></i> Lịch sử báo lỗi
+            </a>
+        </div>
+
+        <!-- Chăm sóc khách hàng Section -->
+        <div class="customer-menu-section">
+            <h6 class="customer-menu-section-title">Chăm sóc khách hàng</h6>
+            <a class="customer-menu-item" href="/Repair/History">
+                <i class="fas fa-history"></i> Lịch sử sửa chữa
+            </a>
+            <a class="customer-menu-item" href="/Customer/Support">
+                <i class="fas fa-headset"></i> Hỗ trợ & Liên hệ
+            </a>
+            <a class="customer-menu-item" href="/Account/Profile">
+                <i class="fas fa-user-cog"></i> Thông tin tài khoản
+            </a>
+        </div>
     </aside>
-</section>
+
+    <!-- Menu Overlay -->
+    <div class="customer-menu-overlay" id="menuOverlay"></div>
+
+    <!-- Main Content Area with Full-Screen Background -->
+    <div class="customer-hero-panel">
+        <div class="hero-background"></div>
+        <div class="customer-hero-content">
+            <div class="hero-content-wrapper">
+                <div class="customer-home-header">
+                    <h1 class="hero-title">Chào mừng bạn trở lại</h1>
+                    <p class="hero-subtitle">Quản lý các yêu cầu sửa chữa và theo dõi tiến độ của bạn</p>
+                </div>
+
+                <div class="customer-dashboard-cards">
+                    <div class="dashboard-card">
+                        <div class="card-icon">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <h5>Quản lý yêu cầu</h5>
+                        <p>Tạo, theo dõi và quản lý các yêu cầu sửa chữa của bạn</p>
+                        <a href="/Repair/Create" class="btn btn-sm btn-primary mt-2">
+                            <i class="fas fa-arrow-right"></i> Tạo mới
+                        </a>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="card-icon">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <h5>Đánh giá dịch vụ</h5>
+                        <p>Đánh giá chất lượng dịch vụ của kỹ thuật viên</p>
+                        <a href="/Customer/Reviews" class="btn btn-sm btn-primary mt-2">
+                            <i class="fas fa-arrow-right"></i> Xem đánh giá
+                        </a>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="card-icon">
+                            <i class="fas fa-life-ring"></i>
+                        </div>
+                        <h5>Hỗ trợ khách hàng</h5>
+                        <p>Liên hệ với chúng tôi nếu bạn cần trợ giúp</p>
+                        <a href="/Customer/Support" class="btn btn-sm btn-primary mt-2">
+                            <i class="fas fa-arrow-right"></i> Liên hệ
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="~/css/customer-home.css" />
 
 <script>
-    (function () {
-        const toggle = document.getElementById("customerMenuToggle");
-        const drawer = document.getElementById("customerDrawer");
-        if (!toggle || !drawer) return;
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuToggle = document.getElementById('menuToggle');
+        const menuClose = document.getElementById('menuClose');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
+        const menuItems = document.querySelectorAll('.customer-menu-item');
 
-        toggle.addEventListener("click", function () {
-            drawer.classList.toggle("open");
-            toggle.classList.toggle("open");
+        menuToggle.addEventListener('click', function() {
+            sidebarMenu.classList.add('active');
+            menuOverlay.classList.add('active');
         });
-    })();
+
+        function closeMenu() {
+            sidebarMenu.classList.remove('active');
+            menuOverlay.classList.remove('active');
+        }
+
+        menuClose.addEventListener('click', closeMenu);
+        menuOverlay.addEventListener('click', closeMenu);
+
+        menuItems.forEach(item => {
+            item.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    closeMenu();
+                }
+            });
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeMenu();
+            }
+        });
+    });
 </script>

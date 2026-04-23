@@ -22,12 +22,12 @@ namespace dienlanh.Controllers
         }
 
         // 🔥 Dashboard
-        public IActionResult Dashboard()
+        public IActionResult Dashboard(string? period = null)
         {
             if (!IsAdmin())
                 return RedirectToAction("Login", "Account");
 
-            var stats = BuildStatistics();
+            var stats = BuildStatistics(period ?? "all");
             return View(stats);
         }
 
@@ -57,12 +57,12 @@ namespace dienlanh.Controllers
             return View(reports);
         }
 
-        public IActionResult Statistics()
+        public IActionResult Statistics(string? period = null)
         {
             if (!IsAdmin())
                 return RedirectToAction("Login", "Account");
 
-            var stats = BuildStatistics();
+            var stats = BuildStatistics(period ?? "all");
             return View(stats);
         }
 
@@ -329,14 +329,19 @@ namespace dienlanh.Controllers
             return RedirectToAction(nameof(Staff));
         }
 
-        private AdminStatisticsViewModel BuildStatistics()
+        private AdminStatisticsViewModel BuildStatistics(string period = "all")
         {
             var requestQuery = _context.RepairRequests.AsQueryable();
             var paidStatuses = new[] { "Đã thanh toán" };
             var completedStatuses = new[] { "Hoàn thành", "Đã hoàn thành", "Đã thanh toán" };
 
+            var today = DateTime.Now.Date;
+            var thisMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            var thisYear = new DateTime(DateTime.Now.Year, 1, 1);
+
             return new AdminStatisticsViewModel
             {
+                SelectedPeriod = period,
                 TotalRequests = requestQuery.Count(),
                 PendingRequests = requestQuery.Count(r => r.Status == "Chờ xử lý"),
                 CompletedRequests = requestQuery.Count(r => r.Status != null && completedStatuses.Contains(r.Status)),
@@ -346,6 +351,28 @@ namespace dienlanh.Controllers
                 TotalRevenue = requestQuery
                     .Where(r => r.Status != null && paidStatuses.Contains(r.Status))
                     .Sum(r => r.FinalAmount ?? 0m),
+
+                // Today statistics (using PreferredVisitAt as reference)
+                TodayRequests = requestQuery.Count(r => r.PreferredVisitAt.HasValue && r.PreferredVisitAt.Value.Date == today),
+                TodayCompletedRequests = requestQuery.Count(r => r.Status != null && completedStatuses.Contains(r.Status) && r.PreferredVisitAt.HasValue && r.PreferredVisitAt.Value.Date == today),
+                TodayRevenue = requestQuery
+                    .Where(r => r.Status != null && paidStatuses.Contains(r.Status) && r.PreferredVisitAt.HasValue && r.PreferredVisitAt.Value.Date == today)
+                    .Sum(r => r.FinalAmount ?? 0m),
+
+                // Month statistics (using PreferredVisitAt as reference)
+                MonthRequests = requestQuery.Count(r => r.PreferredVisitAt.HasValue && r.PreferredVisitAt.Value >= thisMonth),
+                MonthCompletedRequests = requestQuery.Count(r => r.Status != null && completedStatuses.Contains(r.Status) && r.PreferredVisitAt.HasValue && r.PreferredVisitAt.Value >= thisMonth),
+                MonthRevenue = requestQuery
+                    .Where(r => r.Status != null && paidStatuses.Contains(r.Status) && r.PreferredVisitAt.HasValue && r.PreferredVisitAt.Value >= thisMonth)
+                    .Sum(r => r.FinalAmount ?? 0m),
+
+                // Year statistics (using PreferredVisitAt as reference)
+                YearRequests = requestQuery.Count(r => r.PreferredVisitAt.HasValue && r.PreferredVisitAt.Value >= thisYear),
+                YearCompletedRequests = requestQuery.Count(r => r.Status != null && completedStatuses.Contains(r.Status) && r.PreferredVisitAt.HasValue && r.PreferredVisitAt.Value >= thisYear),
+                YearRevenue = requestQuery
+                    .Where(r => r.Status != null && paidStatuses.Contains(r.Status) && r.PreferredVisitAt.HasValue && r.PreferredVisitAt.Value >= thisYear)
+                    .Sum(r => r.FinalAmount ?? 0m),
+
                 DeviceBreakdown = requestQuery
                     .GroupBy(r => r.DeviceType ?? "Chưa rõ")
                     .Select(g => new DeviceStatsItem
